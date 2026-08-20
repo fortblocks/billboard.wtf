@@ -7,22 +7,22 @@ interface TopBarProps {
 
 export function TopBar({ panelOpen, onTogglePanel }: TopBarProps) {
   return (
-    <header className="absolute top-0 left-0 right-0 z-40 flex h-12 items-center justify-between border-b border-neutral-800 bg-neutral-950/80 px-4 backdrop-blur-md">
-      <div className="flex items-center gap-3">
-        <span className="text-lg font-semibold tracking-tight">
-          billboard<span className="text-neutral-500">.wtf</span>
+    <header className="pointer-events-none absolute top-0 left-0 right-0 z-40 flex h-14 items-center justify-between px-4">
+      <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-md border border-white/10">
+        <span className="text-sm font-medium tracking-tight text-white">
+          billboard<span className="text-white/50">.wtf</span>
         </span>
-        <span className="hidden rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400 sm:inline">
+        <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] text-white/60">
           2026
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="pointer-events-auto flex items-center gap-2">
         <button
           onClick={onTogglePanel}
-          className="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-1.5 text-sm text-neutral-200 transition hover:bg-neutral-800"
+          className="rounded-full bg-black/50 px-3 py-1.5 text-sm text-white/80 backdrop-blur-md border border-white/10 transition hover:bg-black/70 hover:text-white"
         >
-          {panelOpen ? "Hide panel" : "Show panel"}
+          {panelOpen ? "Close" : "Menu"}
         </button>
       </div>
     </header>

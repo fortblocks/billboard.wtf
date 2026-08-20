@@ -6,19 +6,15 @@ import { SlidingPanel } from "@/components/Panel/SlidingPanel";
 import { TopBar } from "@/components/TopBar";
 
 export default function HomePage() {
-  const [panelOpen, setPanelOpen] = useState(true);
+  const [panelOpen, setPanelOpen] = useState(false); // start closed for pure billboard feel
   const [panelView, setPanelView] = useState<
     "explore" | "about" | "claim" | "crown" | "card"
   >("about");
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-neutral-950">
-      <TopBar
-        panelOpen={panelOpen}
-        onTogglePanel={() => setPanelOpen((v) => !v)}
-      />
-
-      <main className="absolute inset-0 pt-12">
+    <div className="relative h-screen w-screen overflow-hidden bg-[#0a0a0a]">
+      {/* Grid fills the entire screen */}
+      <main className="absolute inset-0">
         <GridCanvas
           onSelectEmpty={() => {
             setPanelView("claim");
@@ -34,6 +30,12 @@ export default function HomePage() {
           }}
         />
       </main>
+
+      {/* Minimal floating top bar */}
+      <TopBar
+        panelOpen={panelOpen}
+        onTogglePanel={() => setPanelOpen((v) => !v)}
+      />
 
       <SlidingPanel
         open={panelOpen}
