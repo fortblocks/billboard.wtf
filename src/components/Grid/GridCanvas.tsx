@@ -34,7 +34,6 @@ export function GridCanvas({
   const lastPos = useRef({ x: 0, y: 0 });
   const spaceHeld = useRef(false);
 
-  // Crown in the centre
   const CROWN = { x: 690, y: 690, w: 120, h: 120 };
 
   const snap = (v: number) => Math.floor(v / MIN_BLOCK) * MIN_BLOCK;
@@ -49,17 +48,13 @@ export function GridCanvas({
     const width = canvas.width / dpr;
     const height = canvas.height / dpr;
 
-    // Full-screen dark background (no frame)
-    ctx.fillStyle = "#0a0a0a";
+    // Continuous full-screen dark surface — no floating frame
+    ctx.fillStyle = "#0c0c0c";
     ctx.fillRect(0, 0, width, height);
 
     ctx.save();
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale, scale);
-
-    // Soft board background that fills the logical area
-    ctx.fillStyle = "#0f0f0f";
-    ctx.fillRect(0, 0, GRID_SIZE, GRID_SIZE);
 
     // Very subtle grid (only when zoomed in)
     if (scale > 0.45) {
@@ -99,7 +94,6 @@ export function GridCanvas({
       ctx.lineWidth = 2 / scale;
       ctx.strokeRect(x, y, w, h);
 
-      // Size label
       const cellsX = Math.max(1, Math.round(w / MIN_BLOCK));
       const cellsY = Math.max(1, Math.round(h / MIN_BLOCK));
       const px = cellsX * cellsY * 100;
@@ -119,7 +113,6 @@ export function GridCanvas({
     ctx.font = `${13 / scale}px system-ui`;
     ctx.fillText("👑 THE CROWN", CROWN.x + 10, CROWN.y + 22);
 
-    // Gentle centre label when empty
     if (scale < 0.7) {
       ctx.fillStyle = "rgba(255,255,255,0.18)";
       ctx.font = `${16 / scale}px system-ui`;
@@ -132,7 +125,6 @@ export function GridCanvas({
     ctx.restore();
   }, [scale, offset, hoverCell, selection, isSelecting]);
 
-  // Resize + initial framing
   useEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
@@ -159,16 +151,12 @@ export function GridCanvas({
     draw();
   }, [draw]);
 
-  // Fit board to screen on first load
+  // Fit board to fill the screen (cover mode — slight crop on long axis is ok)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     const rect = container.getBoundingClientRect();
-    const padding = 0.92;
-    const s = Math.min(
-      (rect.width * padding) / GRID_SIZE,
-      (rect.height * padding) / GRID_SIZE
-    );
+    const s = Math.max(rect.width / GRID_SIZE, rect.height / GRID_SIZE);
     setScale(s);
     setOffset({
       x: (rect.width - GRID_SIZE * s) / 2,
@@ -176,7 +164,6 @@ export function GridCanvas({
     });
   }, []);
 
-  // Keyboard: space to pan
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.code === "Space") {
@@ -208,16 +195,13 @@ export function GridCanvas({
     const { x, y } = screenToGrid(e.clientX, e.clientY);
     lastPos.current = { x: e.clientX, y: e.clientY };
 
-    // Space or middle mouse = pan
     if (spaceHeld.current || e.button === 1) {
       setIsPanning(true);
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
       return;
     }
 
-    // Left click starts selection
     if (e.button === 0) {
-      // Crown hit?
       if (
         x >= CROWN.x &&
         x <= CROWN.x + CROWN.w &&
@@ -241,7 +225,6 @@ export function GridCanvas({
   const onPointerMove = (e: React.PointerEvent) => {
     const { x, y } = screenToGrid(e.clientX, e.clientY);
 
-    // Hover cell
     if (!isSelecting && !isPanning) {
       if (x >= 0 && x <= GRID_SIZE && y >= 0 && y <= GRID_SIZE) {
         setHoverCell({ x: snap(x), y: snap(y) });
@@ -294,7 +277,6 @@ export function GridCanvas({
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
 
-    // Zoom toward cursor
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
