@@ -21,6 +21,7 @@ export function GridCanvas({
 
   const [scale, setScale] = useState(0.5);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [minScale, setMinScale] = useState(0.3);
   const [isPanning, setIsPanning] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selection, setSelection] = useState<{
@@ -48,7 +49,6 @@ export function GridCanvas({
     const width = canvas.width / dpr;
     const height = canvas.height / dpr;
 
-    // Continuous full-screen dark surface — no floating frame
     ctx.fillStyle = "#0c0c0c";
     ctx.fillRect(0, 0, width, height);
 
@@ -56,7 +56,6 @@ export function GridCanvas({
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale, scale);
 
-    // Very subtle grid (only when zoomed in)
     if (scale > 0.45) {
       ctx.strokeStyle = "rgba(255,255,255,0.04)";
       ctx.lineWidth = 1 / scale;
@@ -72,7 +71,6 @@ export function GridCanvas({
       }
     }
 
-    // Hover highlight for a single 10×10 cell
     if (hoverCell && !isSelecting) {
       ctx.fillStyle = "rgba(255,255,255,0.08)";
       ctx.fillRect(hoverCell.x, hoverCell.y, MIN_BLOCK, MIN_BLOCK);
@@ -81,7 +79,6 @@ export function GridCanvas({
       ctx.strokeRect(hoverCell.x, hoverCell.y, MIN_BLOCK, MIN_BLOCK);
     }
 
-    // Active drag selection
     if (selection) {
       const x = Math.min(selection.startX, selection.endX);
       const y = Math.min(selection.startY, selection.endY);
@@ -102,7 +99,6 @@ export function GridCanvas({
       ctx.fillText(`${cellsX * 10}×${cellsY * 10} · ${px} px`, x + 4, y - 6);
     }
 
-    // The Crown
     ctx.fillStyle = "rgba(250, 204, 21, 0.12)";
     ctx.fillRect(CROWN.x, CROWN.y, CROWN.w, CROWN.h);
     ctx.strokeStyle = "rgba(250, 204, 21, 0.55)";
@@ -151,18 +147,28 @@ export function GridCanvas({
     draw();
   }, [draw]);
 
-  // Fit board to fill the screen (cover mode — slight crop on long axis is ok)
-  useEffect(() => {
+  const fitBoard = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
     const rect = container.getBoundingClientRect();
-    const s = Math.max(rect.width / GRID_SIZE, rect.height / GRID_SIZE);
+    const padding = 0.94;
+    const s = Math.min(
+      (rect.width * padding) / GRID_SIZE,
+      (rect.height * padding) / GRID_SIZE
+    );
+    setMinScale(s);
     setScale(s);
     setOffset({
       x: (rect.width - GRID_SIZE * s) / 2,
       y: (rect.height - GRID_SIZE * s) / 2,
     });
   }, []);
+
+  useEffect(() => {
+    fitBoard();
+    window.addEventListener("resize", fitBoard);
+    return () => window.removeEventListener("resize", fitBoard);
+  }, [fitBoard]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -256,7 +262,7 @@ export function GridCanvas({
     }
   };
 
-  const onPointerUp = (e: React.PointerEvent) => {
+  const onPointerUp = () => {
     if (isSelecting && selection) {
       const x = Math.min(selection.startX, selection.endX);
       const y = Math.min(selection.startY, selection.endY);
@@ -272,7 +278,7 @@ export function GridCanvas({
 
   const onWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const delta = e.deltaY > 0 ? 0.94 : 1.06;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -281,7 +287,8 @@ export function GridCanvas({
     const my = e.clientY - rect.top;
 
     setScale((s) => {
-      const next = Math.min(Math.max(s * delta, 0.12), 6);
+      const next = Math.min(Math.max(s * delta, minScale), 6);
+      if (next === s) return s;
       const ratio = next / s;
       setOffset((o) => ({
         x: mx - (mx - o.x) * ratio,
