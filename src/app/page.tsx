@@ -1,19 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GridCanvas } from "@/components/Grid/GridCanvas";
 import { SlidingPanel } from "@/components/Panel/SlidingPanel";
 import { TopBar } from "@/components/TopBar";
+import { Splash } from "@/components/Splash";
+
+const COOKIE_KEY = "billboard_wtf_seen";
 
 export default function HomePage() {
-  const [panelOpen, setPanelOpen] = useState(false); // start closed for pure billboard feel
+  const [showSplash, setShowSplash] = useState<boolean | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [panelView, setPanelView] = useState<
     "explore" | "about" | "claim" | "crown" | "card"
   >("about");
 
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem(COOKIE_KEY);
+      setShowSplash(!seen);
+    } catch {
+      setShowSplash(true);
+    }
+  }, []);
+
+  const handleEnter = () => {
+    try {
+      localStorage.setItem(COOKIE_KEY, "1");
+    } catch {
+      // ignore
+    }
+    setShowSplash(false);
+  };
+
+  if (showSplash === null) {
+    return <div className="h-screen w-screen bg-black" />;
+  }
+
+  if (showSplash) {
+    return <Splash onEnter={handleEnter} />;
+  }
+
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#0a0a0a]">
-      {/* Grid fills the entire screen */}
       <main className="absolute inset-0">
         <GridCanvas
           onSelectEmpty={() => {
@@ -31,7 +60,6 @@ export default function HomePage() {
         />
       </main>
 
-      {/* Minimal floating top bar */}
       <TopBar
         panelOpen={panelOpen}
         onTogglePanel={() => setPanelOpen((v) => !v)}
