@@ -73,7 +73,7 @@ FACE = {
 - Percentages of the **board-frame.png** box (994×571).
 - Uses **top/bottom/left/right** (not width/height) so scale is stable.
 - Pure white band in PNG ≈ top 3.2% → bottom 59.7%; FACE is slightly expanded into the inner silver lip so drag reaches the visual canvas edge.
-- All design layers live **inside** a face div with `overflow: hidden`.
+- All design layers live **inside** a face div with `overflow: hidden` + `bg-white`.
 - Drag is free; content past the face is clipped (goes “behind” the frame).
 - Export / lock rasterizes **only the face** to a flat image for the live board.
 
@@ -84,6 +84,8 @@ FACE = {
 | `public/splash/board-frame.png` | Transparent frame + pillar overlay (face is empty white in the middle) |
 | `public/splash/env-*.jpg` | World backgrounds **without** a board in the middle (arctic, desert, newyork) |
 | Other jpgs in `public/splash/` | Older/full composites — prefer `env-*` for rotation |
+
+**⚠️ As of 2026-08-22 the `public/` folder is NOT in the git repo.** Local/dev and fresh clones have no board frame or scene images until assets are committed. Homepage and studio will show broken images until `public/splash/*` is restored.
 
 Homepage: backgrounds crossfade; board-frame sits fixed on top; creative renders in FACE.
 
@@ -96,23 +98,23 @@ Homepage: backgrounds crossfade; board-frame sits fixed on top; creative renders
 ### Should work
 
 - Board identical placement/size to homepage.
-- Editable region = white face only (`FACE` + `overflow: hidden`).
+- Editable region = white face only (`FACE` + `overflow: hidden` + `bg-white`).
 - Layers: text, image (upload), sticker (emoji set).
 - Drag, resize handle, rotation (toolbar).
 - Center **+** opens Text / Image / Sticker.
 - Listing card under **left** of board: Name, URL, @handle, Share on X, Save draft, Lock & go live.
 - On lock: rasterize face → flat image layer → `lockAndPublish` → `/`.
-- Welcome seed copy (3 text layers) when canvas empty — treated as hints so + still shows.
+- Welcome seed copy (3 strong text layers) when canvas empty — treated as hints so + still shows.
 
-### Known / open issues (user feedback, not fully resolved)
+### Known / open issues (user feedback)
 
-1. **Bottom clip of layers** — User repeatedly reported layers still cut off before the visual bottom of the white. Geometry was re-probed in a static HTML overlay (`public/face-test.html`) and expanded; **verify again after pull**. If still wrong, compare `getBoundingClientRect()` of face vs the white pixels of the rendered img — possible parent `overflow: hidden` + `translateY(120px)` interaction on some viewports.
-2. **Welcome title sometimes missing / weak hierarchy** — Seed is three layers (Georgia title, body, CTA). Screenshot showed title missing once — check seed effect + `entry.creative` restore from localStorage (old drafts can override seed).
-3. **Typography still “dull”** — Needs stronger default text styling, better fonts, clearer hierarchy; user asked for text boxes to be “visually strong in their own right.”
-4. **Plus vertical position** — Should be true center of **white face** (50%/50% of FACE). If face bounds wrong, plus looks high.
-5. **Controls polish** — Listing card improved but user still wants better layout.
-6. **Video** — Mentioned in product vision; not implemented on face yet.
-7. **localStorage SecurityError** — Seen in some contexts (iframes / blocked storage); store has partial fallbacks; claim flow must stay resilient.
+1. **Bottom clip of layers** — Geometry held at FACE.bottom `38.5%`. Face now has explicit `bg-white` + free drag + overflow clip. **Re-verify on device with real board-frame.png:** new claim → solid block / text → drag to bottom of white → clip line should match bottom of white (not early). If still early, temporarily outline the face and compare to white pixels of the img.
+2. **Typography** — Welcome + default text hardened (Impact title, Georgia body, dark CTA pill). Further polish welcome if needed.
+3. **Stale creative** — Mitigated: storage key `billboard_wtf_ladder_v2` (invalidates old drafts); `claimSlot` always sets `creative: null`; DesignStudio reseeds per `entry.id` when creative is empty.
+4. **Plus vertical position** — Centered at 50%/50% of FACE.
+5. **Controls polish** — Listing card still basic.
+6. **Video** — Not implemented on face yet.
+7. **localStorage SecurityError** — Store has local → session → memory fallbacks.
 
 ### Design studio UX rules (from user)
 
@@ -126,7 +128,7 @@ Homepage: backgrounds crossfade; board-frame sits fixed on top; creative renders
 
 ## 4. Data & state
 
-**File:** `src/lib/store.ts` — localStorage key for ladder state.
+**File:** `src/lib/store.ts` — localStorage key `billboard_wtf_ladder_v2`.
 
 ```ts
 LadderState {
@@ -187,19 +189,20 @@ When these pass, studio geometry/UX is “done” enough to move on:
 - [ ] Face outline matches white canvas including bottom edge (drag reaches silver lip, then clips).
 - [ ] No content paints outside white; overflow clips cleanly.
 - [ ] Plus is centered in white face.
-- [ ] Welcome / empty state is typographically strong and fully inside white.
+- [x] Welcome / empty state is typographically strong and fully inside white.
 - [ ] Text / image / sticker add, drag, resize, rotate, delete work.
 - [ ] Lock exports flat face image and shows on homepage.
 - [ ] Listing fields persist with entry.
+- [x] New claims do not inherit stale creative from localStorage.
 
 ---
 
 ## 8. Immediate next steps (suggested for new chat)
 
-1. **Verify FACE bottom** after pull: new claim → add a solid rectangle layer → drag to bottom of white → confirm clip line == bottom of white (not 15px early). If still early, debug with temporary `outline: 1px solid red` on face and compare to img.
-2. **Typography pass** on welcome + default text layer styles (sizes, weights, fonts).
-3. **Hardening:** clear stale `creative` on new claim so old post-it/welcome state cannot load.
-4. Then: Stripe scaffold, pioneer flow, moderation, more scenes.
+1. **Restore `public/splash/` assets** (board-frame.png + env-*.jpg) into the repo — currently missing from git; app is visually broken without them.
+2. **Verify FACE bottom** with real frame: new claim → add a solid block or large text → drag to bottom of white → confirm clip == visual white bottom. If early, adjust only `FACE.bottom` (not BOARD_WIDTH / BOARD_OFFSET_Y).
+3. **Stripe scaffold** for real $N checkout on `/claim`.
+4. Pioneer flow, moderation, more scenes.
 
 ---
 
@@ -207,7 +210,7 @@ When these pass, studio geometry/UX is “done” enough to move on:
 
 Paste something like:
 
-> Continue billboard.wtf from HANDOVER.md in the repo. Product is the ladder billboard (not pixel grid). Board geometry is LOCKED in `src/lib/boardGeometry.ts`. Priority: (1) confirm white FACE bottom clip is fixed in DesignStudio, (2) stronger welcome/text styling, (3) then payments. Do not change BOARD_WIDTH or BOARD_OFFSET_Y.
+> Continue billboard.wtf from HANDOVER.md in the repo. Product is the ladder billboard (not pixel grid). Board geometry is LOCKED in `src/lib/boardGeometry.ts`. Priority: restore public/splash assets, verify FACE bottom clip, then Stripe. Do not change BOARD_WIDTH or BOARD_OFFSET_Y.
 
 ---
 
@@ -222,4 +225,4 @@ Paste something like:
 | `docs/UX.md` | UX notes |
 | `README.md` | Quick start |
 
-*Last updated: 2026-08-22 for chat handover after design-studio geometry iteration.*
+*Last updated: 2026-08-22 — studio typography pass, seed hardening, storage v2, missing public/ noted.*
