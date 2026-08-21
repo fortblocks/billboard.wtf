@@ -11,7 +11,7 @@ import type {
 } from "@/lib/types";
 import { saveCreative, lockAndPublish, getState } from "@/lib/store";
 import { useRouter } from "next/navigation";
-import { BOARD_WIDTH, BOARD_OFFSET_Y, FACE } from "@/lib/boardGeometry";
+import { BOARD_WIDTH, BOARD_OFFSET_Y, BOARD_ASPECT, FACE } from "@/lib/boardGeometry";
 import {
   FONTS,
   STICKERS,
@@ -47,9 +47,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Tap + to add text — change size, colour & font.",
-        x: 5, y: 10, w: 16, h: 32, z: 1, rotation: -5,
+        x: 8, y: 12, w: 18, h: 34, z: 1, rotation: -4,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.6,
+        fontSize: 1.5,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -60,9 +60,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Drop a PNG or JPEG. Drag, resize, rotate.",
-        x: 78, y: 10, w: 16, h: 32, z: 2, rotation: 4,
+        x: 74, y: 12, w: 18, h: 34, z: 2, rotation: 3,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.6,
+        fontSize: 1.5,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -73,9 +73,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Stickers & emoji — park them anywhere.",
-        x: 5, y: 55, w: 16, h: 32, z: 3, rotation: -3,
+        x: 8, y: 52, w: 18, h: 34, z: 3, rotation: -2,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.6,
+        fontSize: 1.5,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -86,9 +86,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Lock & go live when the poster feels iconic.",
-        x: 78, y: 55, w: 16, h: 32, z: 4, rotation: 3,
+        x: 74, y: 52, w: 18, h: 34, z: 4, rotation: 2,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.6,
+        fontSize: 1.5,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -153,8 +153,8 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     const dx = ((e.clientX - dragStart.current.x) / rect.width) * 100;
     const dy = ((e.clientY - dragStart.current.y) / rect.height) * 100;
     updateLayer(selectedId, {
-      x: Math.max(0, Math.min(100 - 8, dragStart.current.lx + dx)),
-      y: Math.max(0, Math.min(100 - 8, dragStart.current.ly + dy)),
+      x: Math.max(1, Math.min(80, dragStart.current.lx + dx)),
+      y: Math.max(1, Math.min(70, dragStart.current.ly + dy)),
     });
   };
 
@@ -261,6 +261,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
           className="relative"
           style={{
             width: BOARD_WIDTH,
+            aspectRatio: BOARD_ASPECT,
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
@@ -268,19 +269,21 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="pointer-events-none relative z-10 block h-auto w-full select-none"
+            className="pointer-events-none absolute inset-0 z-10 h-full w-full select-none object-fill"
             draggable={false}
           />
 
-          {/* Editable white face only — FACE from boardGeometry */}
           <div
             ref={faceRef}
-            className="absolute z-20 overflow-hidden"
+            className="absolute z-20"
             style={{
               left: FACE.left,
               top: FACE.top,
               width: FACE.width,
               height: FACE.height,
+              overflow: "hidden",
+              contain: "paint",
+              isolation: "isolate",
             }}
             onClick={() => {
               setSelectedId(null);
@@ -318,7 +321,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                 >
                   {layer.type === "text" && (
                     <div
-                      className="flex h-full w-full items-center px-[6%] py-[8%] leading-snug"
+                      className="flex h-full w-full items-center px-[8%] py-[10%] leading-snug"
                       style={{
                         justifyContent:
                           layer.align === "center"
@@ -335,9 +338,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                         wordBreak: "break-word",
                         pointerEvents: "none",
                         background: layer.background || "transparent",
-                        borderRadius: layer.background ? 4 : 0,
+                        borderRadius: layer.background ? 3 : 0,
                         boxShadow: layer.background
-                          ? "0 2px 8px rgba(0,0,0,0.18)"
+                          ? "0 2px 6px rgba(0,0,0,0.2)"
                           : "none",
                       }}
                     >
@@ -381,8 +384,8 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                           const dw = ((ev.clientX - startX) / r.width) * 100;
                           const dh = ((ev.clientY - startY) / r.height) * 100;
                           updateLayer(layer.id, {
-                            w: Math.max(8, Math.min(100, startW + dw)),
-                            h: Math.max(8, Math.min(100, startH + dh)),
+                            w: Math.max(8, Math.min(92, startW + dw)),
+                            h: Math.max(8, Math.min(92, startH + dh)),
                           });
                         };
                         const onUp = () => {
@@ -406,7 +409,11 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                 }}
                 className="absolute z-30 flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-neutral-400/70 text-2xl text-neutral-400 transition hover:border-neutral-600 hover:bg-black/5 hover:text-neutral-700"
                 aria-label="Add content"
-                style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+                style={{
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
               >
                 +
               </button>
@@ -415,47 +422,105 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             {plusOpen && (
               <div
                 className="absolute z-40 flex flex-wrap justify-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl"
-                style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+                style={{
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <button type="button" onClick={addText}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Text</button>
-                <button type="button" onClick={() => fileRef.current?.click()}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Image</button>
-                <button type="button" onClick={() => { setPlusOpen(false); setSelectedId("__stickers__"); }}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Sticker</button>
+                <button
+                  type="button"
+                  onClick={addText}
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
+                >
+                  Text
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
+                >
+                  Image
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlusOpen(false);
+                    setSelectedId("__stickers__");
+                  }}
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
+                >
+                  Sticker
+                </button>
               </div>
             )}
           </div>
 
-          {/* Listing under left of board — just below white/frame */}
-          <div className="absolute left-0 z-30 w-[min(300px,34%)]" style={{ top: "64%" }}>
-            <div className="rounded-xl border border-white/10 bg-black/75 px-3 py-2.5 backdrop-blur-md shadow-lg">
-              <div className="grid grid-cols-1 gap-2">
+          <div
+            className="absolute left-0 z-30 w-[min(280px,32%)]"
+            style={{ top: "72%" }}
+          >
+            <div className="rounded-xl border border-white/10 bg-black/80 px-3 py-2.5 shadow-lg backdrop-blur-md">
+              <div className="grid grid-cols-1 gap-1.5">
                 <label className="block">
-                  <span className="text-[9px] uppercase tracking-wider text-white/35">Name</span>
-                  <input value={brand} onChange={(e) => setBrand(e.target.value)}
-                    className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30" placeholder="Brand" />
+                  <span className="text-[9px] uppercase tracking-wider text-white/35">
+                    Name
+                  </span>
+                  <input
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                    className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30"
+                    placeholder="Brand"
+                  />
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5">
                   <label className="block">
-                    <span className="text-[9px] uppercase tracking-wider text-white/35">URL</span>
-                    <input value={url} onChange={(e) => setUrl(e.target.value)}
-                      className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30" placeholder="https://" />
+                    <span className="text-[9px] uppercase tracking-wider text-white/35">
+                      URL
+                    </span>
+                    <input
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30"
+                      placeholder="https://"
+                    />
                   </label>
                   <label className="block">
-                    <span className="text-[9px] uppercase tracking-wider text-white/35">X</span>
-                    <input value={xHandle} onChange={(e) => setXHandle(e.target.value)}
-                      className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30" placeholder="@you" />
+                    <span className="text-[9px] uppercase tracking-wider text-white/35">
+                      X
+                    </span>
+                    <input
+                      value={xHandle}
+                      onChange={(e) => setXHandle(e.target.value)}
+                      className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30"
+                      placeholder="@you"
+                    />
                   </label>
                 </div>
-                <div className="flex items-center gap-2 pt-0.5">
-                  <button type="button" onClick={shareOnX}
-                    className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white">Share on X</button>
-                  <button type="button" onClick={saveDraft}
-                    className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white">{savedFlash ? "Saved" : "Save"}</button>
-                  <button type="button" onClick={lock} disabled={!brand.trim()}
-                    className="ml-auto rounded-full bg-white px-4 py-1 text-[11px] font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40">Lock & go live</button>
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <button
+                    type="button"
+                    onClick={shareOnX}
+                    className="rounded-full border border-white/15 px-2.5 py-1 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white"
+                  >
+                    Share on X
+                  </button>
+                  <button
+                    type="button"
+                    onClick={saveDraft}
+                    className="rounded-full border border-white/15 px-2.5 py-1 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white"
+                  >
+                    {savedFlash ? "Saved" : "Save"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={lock}
+                    disabled={!brand.trim()}
+                    className="ml-auto rounded-full bg-white px-3 py-1 text-[11px] font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
+                  >
+                    Lock & go live
+                  </button>
                 </div>
               </div>
             </div>
