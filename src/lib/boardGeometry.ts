@@ -1,21 +1,20 @@
 /**
  * Shared board geometry.
  * BOARD_WIDTH + BOARD_OFFSET_Y are LOCKED — do not change.
- * FACE = full white advertising surface of board-frame.png (994×571).
+ *
+ * FACE uses top/bottom/left/right (not height) so it stays locked to the
+ * white canvas under any viewport scale. Values from board-frame.png probe
+ * plus slight expand into the inner silver lip so drag reaches the edge.
  */
 export const BOARD_WIDTH = "min(96vw, 1700px)";
 
-/** LOCKED — pillar tucked under footer */
+/** LOCKED */
 export const BOARD_OFFSET_Y = 120;
 
-/**
- * White face only. Measured continuous near-white band:
- * T≈3.2% B≈59.7% L≈1.9% R≈98.3%
- * Height set so bottom of FACE meets bottom of white (fixes bottom clip).
- */
+/** White canvas only — percentages of board-frame.png box */
 export const FACE = {
-  left: "2%",
-  top: "3.2%",
-  width: "96%",
-  height: "56.8%",
+  left: "1.8%",
+  top: "2.8%",
+  right: "1.8%",
+  bottom: "38.5%",
 } as const;
