@@ -5,15 +5,19 @@ import { SCENES } from "@/lib/scenes";
 import { FaceCreative } from "./FaceCreative";
 import type { BoardEntry, Creative } from "@/lib/types";
 
-const ROTATE_MS = 9000;
+const ROTATE_MS = 10000;
+const FADE_MS = 1800;
 
-/** White face of board-frame.png (994x571) — locked. */
+/** White face of board-frame.png (994×571) — LOCKED. Do not change. */
 const FACE = {
   left: "2.0%",
   top: "3.2%",
   width: "86.7%",
   height: "56.6%",
 };
+
+/** Board vertical offset — LOCKED. Positive = lower on screen. */
+const BOARD_OFFSET_Y = 120;
 
 interface LiveBoardProps {
   creative: Creative | null;
@@ -29,15 +33,10 @@ export function LiveBoard({
   showSceneCaption = true,
 }: LiveBoardProps) {
   const [sceneIndex, setSceneIndex] = useState(0);
-  const [fade, setFade] = useState(true);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setSceneIndex((i) => (i + 1) % SCENES.length);
-        setFade(true);
-      }, 550);
+      setSceneIndex((i) => (i + 1) % SCENES.length);
     }, ROTATE_MS);
     return () => clearInterval(id);
   }, []);
@@ -46,12 +45,14 @@ export function LiveBoard({
 
   return (
     <div className="relative h-full w-full overflow-hidden">
+      {/* Worlds — true crossfade (no black gap). Board stays fixed. */}
       {SCENES.map((s, i) => (
         <div
           key={s.id}
-          className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+          className="absolute inset-0"
           style={{
-            opacity: i === sceneIndex && fade ? 1 : 0,
+            opacity: i === sceneIndex ? 1 : 0,
+            transition: `opacity ${FADE_MS}ms ease-in-out`,
             backgroundImage: `url(${s.src})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -59,16 +60,20 @@ export function LiveBoard({
         />
       ))}
 
-      <div className="absolute inset-x-0 bottom-0 top-0 z-10 flex items-end justify-center">
+      {/* Fixed board — LOCKED size + placement */}
+      <div className="absolute inset-0 z-10 flex items-end justify-center">
         <div
           className="relative"
-          style={{ width: "min(96vw, 1700px)", transform: "translateY(120px)" }}
+          style={{
+            width: "min(96vw, 1700px)",
+            transform: `translateY(${BOARD_OFFSET_Y}px)`,
+          }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="block h-auto w-full select-none"
+            className="pointer-events-none block h-auto w-full select-none"
             draggable={false}
           />
 
