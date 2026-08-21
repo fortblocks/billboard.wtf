@@ -51,7 +51,7 @@ export default function HomePage() {
     <div className="relative h-screen overflow-hidden bg-neutral-950 text-white">
       <SiteNav />
 
-      <main className="absolute inset-x-0 top-14 bottom-[5.5rem] sm:top-16 sm:bottom-24">
+      <main className="absolute inset-x-0 bottom-0 top-14 sm:top-16">
         <LiveBoard
           creative={viewing?.creative ?? null}
           brand={viewing?.brand}
@@ -59,7 +59,7 @@ export default function HomePage() {
         />
 
         {past.length > 0 && (
-          <div className="pointer-events-none absolute bottom-8 left-0 right-0 z-20 flex items-center justify-center gap-3">
+          <div className="pointer-events-none absolute bottom-24 left-0 right-0 z-20 flex items-center justify-center gap-3 sm:bottom-28">
             <button
               type="button"
               onClick={() => {
@@ -92,7 +92,7 @@ export default function HomePage() {
         )}
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-black/70 px-4 py-3 backdrop-blur-xl sm:px-6">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-black/55 px-4 py-3 backdrop-blur-md sm:px-6">
         <div className="mx-auto flex max-w-3xl flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center justify-between gap-4 sm:justify-start">
             <div>
