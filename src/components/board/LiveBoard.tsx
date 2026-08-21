@@ -7,12 +7,12 @@ import type { BoardEntry, Creative } from "@/lib/types";
 
 const ROTATE_MS = 9000;
 
-/** White face inside board-frame.png (1168x784). Slightly inset into bezel. */
+/** White face inside cropped board-frame.png (998x575). */
 const FACE = {
-  left: "9.5%",
-  top: "23.0%",
-  width: "72.8%",
-  height: "40.0%",
+  left: "2.4%",
+  top: "3.8%",
+  width: "85.8%",
+  height: "55.0%",
 };
 
 interface LiveBoardProps {
@@ -22,11 +22,6 @@ interface LiveBoardProps {
   showSceneCaption?: boolean;
 }
 
-/**
- * 1. Board-free worlds — full bleed, crossfade
- * 2. Fixed transparent board-frame.png — never fades
- * 3. FaceCreative — only inside the white face, clipped
- */
 export function LiveBoard({
   creative,
   brand,
@@ -64,20 +59,21 @@ export function LiveBoard({
         />
       ))}
 
-      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-3 sm:px-6 lg:px-10">
+      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-2 sm:px-4 lg:px-8">
         <div
           className="relative w-full"
           style={{
-            aspectRatio: "1168 / 784",
-            maxHeight: "calc(100vh - 7rem)",
-            maxWidth: "min(100%, calc((100vh - 7rem) * 1168 / 784))",
+            aspectRatio: "998 / 575",
+            maxHeight: "min(72vh, calc(100vh - 7rem))",
+            maxWidth: "min(96vw, 1400px, calc(min(72vh, 100vh - 7rem) * 998 / 575))",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
+            className="pointer-events-none absolute inset-0 h-full w-full select-none"
+            style={{ objectFit: "fill" }}
             draggable={false}
           />
 
@@ -99,12 +95,10 @@ export function LiveBoard({
       </div>
 
       {showSceneCaption && (
-        <p className="absolute bottom-3 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/50 sm:text-[11px]">
+        <p className="absolute bottom-3 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/55 sm:text-[11px]">
           {scene.location}
           {brand ? (
-            <span className="text-white/75">
-              {" "}· {brand}
-            </span>
+            <span className="text-white/80"> · {brand}</span>
           ) : null}
         </p>
       )}
