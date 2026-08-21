@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SCENES } from "@/lib/scenes";
 import { FaceCreative } from "./FaceCreative";
 import type { BoardEntry, Creative } from "@/lib/types";
-import { BOARD_WIDTH, BOARD_OFFSET_Y, FACE } from "@/lib/boardGeometry";
+import { BOARD_WIDTH, BOARD_OFFSET_Y, BOARD_ASPECT, FACE } from "@/lib/boardGeometry";
 
 const ROTATE_MS = 10000;
 const FADE_MS = 1800;
@@ -35,6 +35,7 @@ export function LiveBoard({
 
   return (
     <div className="relative h-full w-full overflow-hidden">
+      {/* Worlds — true crossfade (no black gap) */}
       {SCENES.map((s, i) => (
         <div
           key={s.id}
@@ -49,11 +50,13 @@ export function LiveBoard({
         />
       ))}
 
+      {/* Fixed board — large, bottom-aligned, lowered 120px */}
       <div className="absolute inset-0 z-10 flex items-end justify-center">
         <div
           className="relative"
           style={{
             width: BOARD_WIDTH,
+            aspectRatio: BOARD_ASPECT,
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
@@ -61,7 +64,7 @@ export function LiveBoard({
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="pointer-events-none block h-auto w-full select-none"
+            className="pointer-events-none absolute inset-0 h-full w-full select-none object-fill"
             draggable={false}
           />
 
