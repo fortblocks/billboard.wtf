@@ -8,15 +8,15 @@ import type { BoardEntry, Creative } from "@/lib/types";
 const ROTATE_MS = 10000;
 const FADE_MS = 1800;
 
-/** White face of board-frame.png (994×571) — LOCKED. Do not change. */
+/** White face of board-frame.png (994×571) — measured from PNG white pixels. */
 const FACE = {
-  left: "2.0%",
+  left: "2%",
   top: "3.2%",
-  width: "86.7%",
-  height: "56.6%",
+  width: "96%",
+  height: "56.4%",
 };
 
-/** Board vertical offset — LOCKED. Positive = lower on screen. */
+/** Board vertical offset — positive = lower on screen. */
 const BOARD_OFFSET_Y = 120;
 
 interface LiveBoardProps {
@@ -45,7 +45,6 @@ export function LiveBoard({
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      {/* Worlds — true crossfade (no black gap). Board stays fixed. */}
       {SCENES.map((s, i) => (
         <div
           key={s.id}
@@ -60,7 +59,6 @@ export function LiveBoard({
         />
       ))}
 
-      {/* Fixed board — LOCKED size + placement */}
       <div className="absolute inset-0 z-10 flex items-end justify-center">
         <div
           className="relative"
