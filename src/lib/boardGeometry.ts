@@ -1,21 +1,19 @@
 /**
- * Shared board geometry — measured from public/splash/board-frame.png (994×571).
- * FACE is inset slightly inside the measured near-white so widgets never spill
- * into the silver frame or the page background.
+ * Shared board geometry — LOCKED board size/placement.
+ * Do not change BOARD_WIDTH or BOARD_OFFSET_Y — user-approved.
  *
- * Measured near-white: L≈0.8% T≈1.6% R≈98.3% B≈60.2%
- * Inset FACE used for editing + live creative.
+ * FACE = editable white only (measured from board-frame.png 994×571).
+ * Near-white band ≈ L0.8% T1.6% R98.3% B60.2%. Inset so widgets stay in white.
  */
 export const BOARD_WIDTH = "min(96vw, 1700px)";
-export const BOARD_ASPECT = "994 / 571";
 
-/** Homepage: tucks pillar under the transparent footer bar */
+/** Homepage + studio: tucks pillar under footer; LOCKED */
 export const BOARD_OFFSET_Y = 120;
 
-/** White advertising face — percentages of board-frame.png box (inset) */
+/** White advertising face only — not frame, not pillar */
 export const FACE = {
-  left: "3%",
-  top: "4.5%",
-  width: "94%",
-  height: "54%",
+  left: "2.5%",
+  top: "3.5%",
+  width: "95%",
+  height: "55.5%",
 } as const;
