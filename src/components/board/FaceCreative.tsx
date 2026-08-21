@@ -122,7 +122,7 @@ export function FaceCreative({
 }) {
   if (!creative || creative.layers.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-white">
+      <div className="flex h-full w-full items-center justify-center bg-transparent">
         <p className="text-lg font-light tracking-tight text-neutral-400 sm:text-2xl">
           {emptyLabel}
         </p>
@@ -131,7 +131,7 @@ export function FaceCreative({
   }
 
   return (
-    <div className="relative h-full w-full bg-white">
+    <div className="relative h-full w-full overflow-hidden bg-white">
       {creative.layers
         .slice()
         .sort((a, b) => a.z - b.z)
