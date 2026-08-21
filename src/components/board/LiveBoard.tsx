@@ -5,14 +5,14 @@ import { SCENES } from "@/lib/scenes";
 import { FaceCreative } from "./FaceCreative";
 import type { BoardEntry, Creative } from "@/lib/types";
 
-const ROTATE_MS = 8000;
+const ROTATE_MS = 9000;
 
-/** Face region on photoreal boards — consistent frontal placement. */
+/** Face region inside board-frame.png (measured). */
 const FACE = {
-  left: "11.5%",
-  top: "20.5%",
-  width: "77%",
-  height: "39%",
+  left: "2.4%",
+  top: "3.6%",
+  width: "95.2%",
+  height: "54.4%",
 };
 
 interface LiveBoardProps {
@@ -37,7 +37,7 @@ export function LiveBoard({
       setTimeout(() => {
         setSceneIndex((i) => (i + 1) % SCENES.length);
         setFade(true);
-      }, 500);
+      }, 600);
     }, ROTATE_MS);
     return () => clearInterval(id);
   }, []);
@@ -45,37 +45,48 @@ export function LiveBoard({
   const scene = SCENES[sceneIndex];
 
   return (
-    <div className="relative w-full max-w-[min(96vw,1280px)]">
-      <div
-        className="relative overflow-hidden rounded-sm"
-        style={{ aspectRatio: "16 / 10" }}
-      >
-        {SCENES.map((s, i) => (
-          <div
-            key={s.id}
-            className="absolute inset-0 transition-opacity duration-700"
-            style={{
-              opacity: i === sceneIndex && fade ? 1 : 0,
-              backgroundImage: `url(${s.src})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
-        ))}
+    <div className="relative w-full max-w-[min(96vw,1100px)]">
+      <div className="relative overflow-hidden rounded-sm bg-neutral-900">
+        <div className="absolute inset-0">
+          {SCENES.map((s, i) => (
+            <div
+              key={s.id}
+              className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+              style={{
+                opacity: i === sceneIndex && fade ? 1 : 0,
+                backgroundImage: `url(${s.src})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          ))}
+        </div>
 
-        <div
-          className="absolute overflow-hidden"
-          style={{
-            left: FACE.left,
-            top: FACE.top,
-            width: FACE.width,
-            height: FACE.height,
-          }}
-        >
-          <FaceCreative
-            creative={creative}
-            emptyLabel={emptyLabel ?? "The board is open"}
-          />
+        <div className="relative z-10 mx-auto w-[min(100%,920px)] px-3 py-6 sm:py-8">
+          <div className="relative w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/splash/board-frame.png"
+              alt=""
+              className="relative z-10 block h-auto w-full select-none"
+              draggable={false}
+            />
+
+            <div
+              className="absolute z-20 overflow-hidden"
+              style={{
+                left: FACE.left,
+                top: FACE.top,
+                width: FACE.width,
+                height: FACE.height,
+              }}
+            >
+              <FaceCreative
+                creative={creative}
+                emptyLabel={emptyLabel ?? "The board is open"}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
