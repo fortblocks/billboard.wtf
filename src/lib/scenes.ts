@@ -1,28 +1,32 @@
 import type { Scene } from "./types";
 
 /**
- * World plates behind the fixed CSS board.
- * Using /splash/*.jpg (files you already have).
- * Note: these photos include a board in-frame; the CSS board covers the centre.
- * Later swap to true board-free plates under /splash/env/.
+ * Board-free world plates.
+ * The fixed transparent board-frame.png sits on top and never fades.
+ *
+ * Files:
+ *   public/splash/env-arctic.jpg
+ *   public/splash/env-desert.jpg
+ *   public/splash/env-newyork.jpg
+ *   public/splash/board-frame.png
  */
 export const SCENES: Scene[] = [
   {
     id: "arctic",
     name: "The ice",
-    src: "/splash/arctic.jpg",
+    src: "/splash/env-arctic.jpg",
     location: "Antarctica",
   },
   {
-    id: "city",
+    id: "newyork",
     name: "Downtown",
-    src: "/splash/city.jpg",
+    src: "/splash/env-newyork.jpg",
     location: "New York, USA",
   },
   {
     id: "desert",
     name: "Open desert",
-    src: "/splash/desert.jpg",
+    src: "/splash/env-desert.jpg",
     location: "Sahara",
   },
 ];
