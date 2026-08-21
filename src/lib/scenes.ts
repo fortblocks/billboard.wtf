@@ -1,23 +1,23 @@
 import type { Scene } from "./types";
 
-/** Worlds behind the fixed transparent board. */
+/** Board-free world plates — the fixed transparent frame sits on top. */
 export const SCENES: Scene[] = [
   {
     id: "arctic",
     name: "The ice",
-    src: "/splash/arctic.jpg",
+    src: "/splash/env/arctic.jpg",
     location: "Antarctica",
   },
   {
     id: "city",
     name: "Downtown",
-    src: "/splash/city.jpg",
+    src: "/splash/env/city.jpg",
     location: "New York, USA",
   },
   {
     id: "desert",
     name: "Open desert",
-    src: "/splash/desert.jpg",
+    src: "/splash/env/desert.jpg",
     location: "Sahara",
   },
 ];
