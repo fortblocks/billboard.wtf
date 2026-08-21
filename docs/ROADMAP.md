@@ -10,16 +10,18 @@
 - [x] Platform-owned backgrounds (no user BG control)
 - [x] Hall of Fame + map/how scaffolds
 - [x] Locked board geometry shared between homepage and studio
+- [x] Stronger welcome / default text styling (Impact title, Georgia body, CTA pill)
+- [x] Stale localStorage creative isolation (KEY v2 + claim creative:null + per-entry seed)
 
 ## In progress / fragile
 
-- [ ] White FACE bounds pixel-perfect at bottom (re-verify after geometry change)
-- [ ] Strong default / welcome typography
+- [ ] `public/splash/` assets **not in git** — must restore board-frame.png + env-*.jpg
+- [ ] White FACE bounds pixel-perfect at bottom (re-verify after assets restored)
 - [ ] Studio listing card polish
-- [ ] Stale localStorage creative not overriding new claim seed
 
 ## Next
 
+- [ ] Restore / commit splash assets
 - [ ] Stripe (or similar) for real $N checkout
 - [ ] Pioneer apply / tweet-gate
 - [ ] Approval queue (moderation)
