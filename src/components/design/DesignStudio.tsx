@@ -47,9 +47,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Tap + to add text — change size, colour & font.",
-        x: 4, y: 8, w: 22, h: 22, z: 1, rotation: -6,
+        x: 5, y: 10, w: 16, h: 32, z: 1, rotation: -5,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.8,
+        fontSize: 1.6,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -60,9 +60,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Drop a PNG or JPEG. Drag, resize, rotate.",
-        x: 72, y: 10, w: 22, h: 20, z: 2, rotation: 5,
+        x: 78, y: 10, w: 16, h: 32, z: 2, rotation: 4,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.8,
+        fontSize: 1.6,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -73,9 +73,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Stickers & emoji — park them anywhere.",
-        x: 5, y: 68, w: 22, h: 20, z: 3, rotation: -4,
+        x: 5, y: 55, w: 16, h: 32, z: 3, rotation: -3,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.8,
+        fontSize: 1.6,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -86,9 +86,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Lock & go live when the poster feels iconic.",
-        x: 70, y: 66, w: 24, h: 20, z: 4, rotation: 3,
+        x: 78, y: 55, w: 16, h: 32, z: 4, rotation: 3,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.8,
+        fontSize: 1.6,
         color: "#1a1a1a",
         fontWeight: 500,
         fontStyle: "normal",
@@ -153,8 +153,8 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     const dx = ((e.clientX - dragStart.current.x) / rect.width) * 100;
     const dy = ((e.clientY - dragStart.current.y) / rect.height) * 100;
     updateLayer(selectedId, {
-      x: Math.max(-5, Math.min(85, dragStart.current.lx + dx)),
-      y: Math.max(-5, Math.min(85, dragStart.current.ly + dy)),
+      x: Math.max(0, Math.min(100 - 8, dragStart.current.lx + dx)),
+      y: Math.max(0, Math.min(100 - 8, dragStart.current.ly + dy)),
     });
   };
 
@@ -272,6 +272,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             draggable={false}
           />
 
+          {/* Editable white face only — FACE from boardGeometry */}
           <div
             ref={faceRef}
             className="absolute z-20 overflow-hidden"
@@ -403,8 +404,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                   e.stopPropagation();
                   setPlusOpen((v) => !v);
                 }}
-                className="absolute left-1/2 top-1/2 z-30 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-dashed border-neutral-400/80 text-3xl text-neutral-500 transition hover:border-neutral-600 hover:bg-black/5 hover:text-neutral-800"
+                className="absolute z-30 flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-neutral-400/70 text-2xl text-neutral-400 transition hover:border-neutral-600 hover:bg-black/5 hover:text-neutral-700"
                 aria-label="Add content"
+                style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
               >
                 +
               </button>
@@ -412,7 +414,8 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
 
             {plusOpen && (
               <div
-                className="absolute left-1/2 top-1/2 z-40 flex -translate-x-1/2 -translate-y-1/2 flex-wrap justify-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl"
+                className="absolute z-40 flex flex-wrap justify-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl"
+                style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <button type="button" onClick={addText}
@@ -425,9 +428,9 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             )}
           </div>
 
-          {/* Listing under left of board — black space only, clears pillar */}
-          <div className="absolute left-0 z-30 w-[min(340px,38%)]" style={{ top: "78%" }}>
-            <div className="rounded-xl border border-white/10 bg-black/70 p-3 backdrop-blur-md">
+          {/* Listing under left of board — just below white/frame */}
+          <div className="absolute left-0 z-30 w-[min(300px,34%)]" style={{ top: "64%" }}>
+            <div className="rounded-xl border border-white/10 bg-black/75 px-3 py-2.5 backdrop-blur-md shadow-lg">
               <div className="grid grid-cols-1 gap-2">
                 <label className="block">
                   <span className="text-[9px] uppercase tracking-wider text-white/35">Name</span>
