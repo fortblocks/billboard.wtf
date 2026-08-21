@@ -71,8 +71,8 @@ export function LiveBoard({
             style={{
               left: FACE.left,
               top: FACE.top,
-              width: FACE.width,
-              height: FACE.height,
+              right: FACE.right,
+              bottom: FACE.bottom,
             }}
           >
             <FaceCreative
