@@ -46,54 +46,19 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
       {
         id: uid(),
         type: "text",
-        text: "Tap + to add text — change size, colour & font.",
-        x: 10, y: 14, w: 16, h: 30, z: 1, rotation: -4,
+        text: "Welcome to the Billboard Builder.\n\nThis is your canvas — everything you place here becomes the poster on the live board. Add text, images, stickers. Layer them, scale them, make it yours.\n\nWhen it feels iconic, hit Lock & go live.",
+        x: 6,
+        y: 12,
+        w: 88,
+        h: 70,
+        z: 1,
+        rotation: 0,
         fontFamily: "system-ui, sans-serif",
-        fontSize: 1.5,
-        color: "#1a1a1a",
+        fontSize: 2.2,
+        color: "#222222",
         fontWeight: 500,
         fontStyle: "normal",
-        align: "left",
-        background: "#FEF08A",
-      },
-      {
-        id: uid(),
-        type: "text",
-        text: "Drop a PNG or JPEG. Drag, resize, rotate.",
-        x: 74, y: 14, w: 16, h: 30, z: 2, rotation: 3,
-        fontFamily: "system-ui, sans-serif",
-        fontSize: 1.5,
-        color: "#1a1a1a",
-        fontWeight: 500,
-        fontStyle: "normal",
-        align: "left",
-        background: "#FBCFE8",
-      },
-      {
-        id: uid(),
-        type: "text",
-        text: "Stickers & emoji — park them anywhere.",
-        x: 10, y: 55, w: 16, h: 30, z: 3, rotation: -2,
-        fontFamily: "system-ui, sans-serif",
-        fontSize: 1.5,
-        color: "#1a1a1a",
-        fontWeight: 500,
-        fontStyle: "normal",
-        align: "left",
-        background: "#BBF7D0",
-      },
-      {
-        id: uid(),
-        type: "text",
-        text: "Lock & go live when the poster feels iconic.",
-        x: 74, y: 55, w: 16, h: 30, z: 4, rotation: 2,
-        fontFamily: "system-ui, sans-serif",
-        fontSize: 1.5,
-        color: "#1a1a1a",
-        fontWeight: 500,
-        fontStyle: "normal",
-        align: "left",
-        background: "#BFDBFE",
+        align: "center",
       },
     ];
     setLayers(posts);
@@ -104,10 +69,17 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     [layers]
   );
   const selected = layers.find((l) => l.id === selectedId) ?? null;
+  const empty = layers.length === 0;
   const onlyHints =
     layers.length > 0 &&
-    layers.every((l) => l.type === "text" && !!l.background);
-  const showCenterPlus = layers.length === 0 || onlyHints;
+    layers.every(
+      (l) =>
+        l.type === "text" &&
+        (!!l.background ||
+          (typeof l.text === "string" &&
+            l.text.startsWith("Welcome to the Billboard Builder")))
+    );
+  const showCenterPlus = empty || onlyHints;
 
   const updateLayer = useCallback((lid: string, patch: Partial<Layer>) => {
     setLayers((prev) =>
@@ -152,9 +124,10 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     const rect = faceRef.current.getBoundingClientRect();
     const dx = ((e.clientX - dragStart.current.x) / rect.width) * 100;
     const dy = ((e.clientY - dragStart.current.y) / rect.height) * 100;
+    // Free position — overflow:hidden on face clips outside white
     updateLayer(selectedId, {
-      x: Math.max(2, Math.min(82, dragStart.current.lx + dx)),
-      y: Math.max(2, Math.min(68, dragStart.current.ly + dy)),
+      x: dragStart.current.lx + dx,
+      y: dragStart.current.ly + dy,
     });
   };
 
@@ -334,6 +307,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                         fontStyle: layer.fontStyle,
                         textAlign: layer.align,
                         wordBreak: "break-word",
+                        whiteSpace: "pre-wrap",
                         pointerEvents: "none",
                         background: layer.background || "transparent",
                         borderRadius: layer.background ? 3 : 0,
@@ -455,72 +429,61 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             )}
           </div>
 
-          {/* Controls under left of board — does not affect board size */}
+          {/* Listing card — under left of board, clear of white */}
           <div
-            className="absolute left-0 z-30 w-[min(280px,30%)]"
-            style={{ top: "68%" }}
+            className="absolute left-0 z-30"
+            style={{ top: "66%", width: "min(300px, 28%)" }}
           >
-            <div className="rounded-xl border border-white/10 bg-black/80 px-3 py-2.5 shadow-lg backdrop-blur-md">
-              <div className="grid grid-cols-1 gap-1.5">
-                <label className="block">
-                  <span className="text-[9px] uppercase tracking-wider text-white/35">
-                    Name
-                  </span>
-                  <input
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30"
-                    placeholder="Brand"
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <label className="block">
-                    <span className="text-[9px] uppercase tracking-wider text-white/35">
-                      URL
-                    </span>
-                    <input
-                      value={url}
-                      onChange={(e) => setUrl(e.target.value)}
-                      className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30"
-                      placeholder="https://"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="text-[9px] uppercase tracking-wider text-white/35">
-                      X
-                    </span>
-                    <input
-                      value={xHandle}
-                      onChange={(e) => setXHandle(e.target.value)}
-                      className="mt-0.5 w-full rounded-md border border-white/12 bg-white/5 px-2.5 py-1.5 text-sm text-white outline-none focus:border-white/30"
-                      placeholder="@you"
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center gap-1.5 pt-0.5">
-                  <button
-                    type="button"
-                    onClick={shareOnX}
-                    className="rounded-full border border-white/15 px-2.5 py-1 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white"
-                  >
-                    Share on X
-                  </button>
-                  <button
-                    type="button"
-                    onClick={saveDraft}
-                    className="rounded-full border border-white/15 px-2.5 py-1 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white"
-                  >
-                    {savedFlash ? "Saved" : "Save"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={lock}
-                    disabled={!brand.trim()}
-                    className="ml-auto rounded-full bg-white px-3 py-1 text-[11px] font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
-                  >
-                    Lock & go live
-                  </button>
-                </div>
+            <div className="rounded-2xl border border-white/10 bg-black/85 p-3 shadow-xl backdrop-blur-md">
+              <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.14em] text-white/40">
+                Your listing
+              </p>
+              <label className="block">
+                <span className="sr-only">Name</span>
+                <input
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-white/30"
+                  placeholder="Brand name"
+                />
+              </label>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-white/30"
+                  placeholder="https://"
+                />
+                <input
+                  value={xHandle}
+                  onChange={(e) => setXHandle(e.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-white/30"
+                  placeholder="@handle"
+                />
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={shareOnX}
+                  className="rounded-full border border-white/15 px-3 py-1.5 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white"
+                >
+                  Share on X
+                </button>
+                <button
+                  type="button"
+                  onClick={saveDraft}
+                  className="rounded-full border border-white/15 px-3 py-1.5 text-[11px] text-white/70 transition hover:border-white/35 hover:text-white"
+                >
+                  {savedFlash ? "Saved" : "Save draft"}
+                </button>
+                <button
+                  type="button"
+                  onClick={lock}
+                  disabled={!brand.trim()}
+                  className="ml-auto rounded-full bg-white px-4 py-1.5 text-[11px] font-semibold text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
+                >
+                  Lock & go live
+                </button>
               </div>
             </div>
           </div>
