@@ -7,12 +7,12 @@ import type { BoardEntry, Creative } from "@/lib/types";
 
 const ROTATE_MS = 9000;
 
-/** White face inside cropped board-frame.png (998x575). */
+/** White face of board-frame.png after crop (994x571). */
 const FACE = {
-  left: "2.4%",
-  top: "3.8%",
-  width: "85.8%",
-  height: "55.0%",
+  left: "2.0%",
+  top: "3.2%",
+  width: "86.7%",
+  height: "56.6%",
 };
 
 interface LiveBoardProps {
@@ -59,21 +59,13 @@ export function LiveBoard({
         />
       ))}
 
-      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-2 sm:px-4 lg:px-8">
-        <div
-          className="relative w-full"
-          style={{
-            aspectRatio: "998 / 575",
-            maxHeight: "min(72vh, calc(100vh - 7rem))",
-            maxWidth: "min(96vw, 1400px, calc(min(72vh, 100vh - 7rem) * 998 / 575))",
-          }}
-        >
+      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-2 sm:px-3">
+        <div className="relative w-[min(96vw,1500px)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full select-none"
-            style={{ objectFit: "fill" }}
+            className="block h-auto w-full select-none"
             draggable={false}
           />
 
@@ -97,9 +89,7 @@ export function LiveBoard({
       {showSceneCaption && (
         <p className="absolute bottom-3 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/55 sm:text-[11px]">
           {scene.location}
-          {brand ? (
-            <span className="text-white/80"> · {brand}</span>
-          ) : null}
+          {brand ? <span className="text-white/80"> · {brand}</span> : null}
         </p>
       )}
     </div>
