@@ -31,8 +31,8 @@ export default function ClaimPage() {
       const cleanUrl =
         url.trim() && url.trim() !== "https://" ? url.trim() : undefined;
       const entry = claimSlot({ brand: brand.trim(), url: cleanUrl });
-      // Hard navigate so design page always loads fresh
-      window.location.href = `/design/${entry.id}`;
+      // Soft nav keeps in-memory store; sessionStorage covers hard reload
+      router.push(`/design/${entry.id}`);
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "Something went wrong");
