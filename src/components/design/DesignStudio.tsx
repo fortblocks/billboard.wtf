@@ -11,7 +11,7 @@ import type {
 } from "@/lib/types";
 import { saveCreative, lockAndPublish, getState } from "@/lib/store";
 import { useRouter } from "next/navigation";
-import { BOARD_WIDTH, BOARD_OFFSET_Y, BOARD_ASPECT, FACE } from "@/lib/boardGeometry";
+import { BOARD_WIDTH, BOARD_OFFSET_Y, FACE } from "@/lib/boardGeometry";
 import {
   FONTS,
   STICKERS,
@@ -47,7 +47,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Tap + to add text — change size, colour & font.",
-        x: 8, y: 12, w: 18, h: 34, z: 1, rotation: -4,
+        x: 10, y: 14, w: 16, h: 30, z: 1, rotation: -4,
         fontFamily: "system-ui, sans-serif",
         fontSize: 1.5,
         color: "#1a1a1a",
@@ -60,7 +60,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Drop a PNG or JPEG. Drag, resize, rotate.",
-        x: 74, y: 12, w: 18, h: 34, z: 2, rotation: 3,
+        x: 74, y: 14, w: 16, h: 30, z: 2, rotation: 3,
         fontFamily: "system-ui, sans-serif",
         fontSize: 1.5,
         color: "#1a1a1a",
@@ -73,7 +73,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Stickers & emoji — park them anywhere.",
-        x: 8, y: 52, w: 18, h: 34, z: 3, rotation: -2,
+        x: 10, y: 55, w: 16, h: 30, z: 3, rotation: -2,
         fontFamily: "system-ui, sans-serif",
         fontSize: 1.5,
         color: "#1a1a1a",
@@ -86,7 +86,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         id: uid(),
         type: "text",
         text: "Lock & go live when the poster feels iconic.",
-        x: 74, y: 52, w: 18, h: 34, z: 4, rotation: 2,
+        x: 74, y: 55, w: 16, h: 30, z: 4, rotation: 2,
         fontFamily: "system-ui, sans-serif",
         fontSize: 1.5,
         color: "#1a1a1a",
@@ -153,8 +153,8 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     const dx = ((e.clientX - dragStart.current.x) / rect.width) * 100;
     const dy = ((e.clientY - dragStart.current.y) / rect.height) * 100;
     updateLayer(selectedId, {
-      x: Math.max(1, Math.min(80, dragStart.current.lx + dx)),
-      y: Math.max(1, Math.min(70, dragStart.current.ly + dy)),
+      x: Math.max(2, Math.min(82, dragStart.current.lx + dx)),
+      y: Math.max(2, Math.min(68, dragStart.current.ly + dy)),
     });
   };
 
@@ -256,12 +256,12 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-neutral-950">
+      {/* LOCKED board size + placement — same as homepage LiveBoard */}
       <div className="absolute inset-0 flex items-end justify-center">
         <div
           className="relative"
           style={{
             width: BOARD_WIDTH,
-            aspectRatio: BOARD_ASPECT,
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
@@ -269,21 +269,19 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="pointer-events-none absolute inset-0 z-10 h-full w-full select-none object-fill"
+            className="pointer-events-none relative z-10 block h-auto w-full select-none"
             draggable={false}
           />
 
+          {/* White face only — all editing confined here */}
           <div
             ref={faceRef}
-            className="absolute z-20"
+            className="absolute z-20 overflow-hidden"
             style={{
               left: FACE.left,
               top: FACE.top,
               width: FACE.width,
               height: FACE.height,
-              overflow: "hidden",
-              contain: "paint",
-              isolation: "isolate",
             }}
             onClick={() => {
               setSelectedId(null);
@@ -384,8 +382,8 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                           const dw = ((ev.clientX - startX) / r.width) * 100;
                           const dh = ((ev.clientY - startY) / r.height) * 100;
                           updateLayer(layer.id, {
-                            w: Math.max(8, Math.min(92, startW + dw)),
-                            h: Math.max(8, Math.min(92, startH + dh)),
+                            w: Math.max(8, Math.min(90, startW + dw)),
+                            h: Math.max(8, Math.min(90, startH + dh)),
                           });
                         };
                         const onUp = () => {
@@ -457,9 +455,10 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             )}
           </div>
 
+          {/* Controls under left of board — does not affect board size */}
           <div
-            className="absolute left-0 z-30 w-[min(280px,32%)]"
-            style={{ top: "72%" }}
+            className="absolute left-0 z-30 w-[min(280px,30%)]"
+            style={{ top: "68%" }}
           >
             <div className="rounded-xl border border-white/10 bg-black/80 px-3 py-2.5 shadow-lg backdrop-blur-md">
               <div className="grid grid-cols-1 gap-1.5">
