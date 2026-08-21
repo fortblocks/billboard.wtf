@@ -62,7 +62,7 @@ export function LiveBoard({
       <div className="absolute inset-x-0 bottom-0 top-0 z-10 flex items-end justify-center">
         <div
           className="relative"
-          style={{ width: "min(96vw, 1700px)", transform: "translateY(100px)" }}
+          style={{ width: "min(96vw, 1700px)", transform: "translateY(120px)" }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
