@@ -45,7 +45,7 @@ export function LiveBoard({
   const scene = SCENES[sceneIndex];
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-neutral-950">
+    <div className="relative h-full w-full overflow-hidden">
       {SCENES.map((s, i) => (
         <div
           key={s.id}
@@ -59,13 +59,16 @@ export function LiveBoard({
         />
       ))}
 
-      <div className="relative z-10 flex h-full w-full items-end justify-center px-3 pb-1 pt-2 sm:px-5 sm:pb-2 sm:pt-3">
-        <div className="relative inline-block max-h-full max-w-full">
+      <div className="absolute inset-x-0 bottom-0 top-0 z-10 flex items-end justify-center">
+        <div
+          className="relative"
+          style={{ width: "min(96vw, 1700px)" }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="block max-h-[calc(100vh-6.5rem-1rem)] max-w-[min(94vw,1600px)] w-auto h-auto select-none"
+            className="block h-auto w-full select-none"
             draggable={false}
           />
 
@@ -87,9 +90,9 @@ export function LiveBoard({
       </div>
 
       {showSceneCaption && (
-        <p className="pointer-events-none absolute bottom-1 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/50 sm:text-[11px]">
+        <p className="pointer-events-none absolute bottom-14 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/55 sm:bottom-16 sm:text-[11px]">
           {scene.location}
-          {brand ? <span className="text-white/75"> · {brand}</span> : null}
+          {brand ? <span className="text-white/80"> · {brand}</span> : null}
         </p>
       )}
     </div>
