@@ -21,6 +21,8 @@ export interface TextLayer extends BaseLayer {
   fontWeight: number;
   fontStyle: "normal" | "italic";
   align: "left" | "center" | "right";
+  /** Optional post-it / card background */
+  background?: string;
 }
 
 export interface ImageLayer extends BaseLayer {
