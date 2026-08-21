@@ -5,33 +5,59 @@ import { emptyLadder, nextHallNumber } from "./ladder";
 
 const KEY = "billboard_wtf_ladder_v1";
 
-/** In-memory fallback when localStorage is blocked (Brave shields, private mode, etc.) */
+/** In-memory fallback when both localStorage and sessionStorage are blocked */
 let memoryState: LadderState | null = null;
 
-function canUseStorage(): boolean {
-  if (typeof window === "undefined") return false;
+type StorageKind = "local" | "session" | "memory";
+
+function probeStorage(): StorageKind {
+  if (typeof window === "undefined") return "memory";
   try {
     const k = "__bb_test__";
     window.localStorage.setItem(k, "1");
     window.localStorage.removeItem(k);
-    return true;
+    return "local";
   } catch {
-    return false;
+    // try session
   }
+  try {
+    const k = "__bb_test__";
+    window.sessionStorage.setItem(k, "1");
+    window.sessionStorage.removeItem(k);
+    return "session";
+  } catch {
+    return "memory";
+  }
+}
+
+let storageKind: StorageKind | null = null;
+
+function kind(): StorageKind {
+  if (storageKind === null) storageKind = probeStorage();
+  return storageKind;
 }
 
 function read(): LadderState {
   if (typeof window === "undefined") return emptyLadder();
 
-  if (!canUseStorage()) {
+  const k = kind();
+
+  if (k === "memory") {
     if (!memoryState) memoryState = emptyLadder();
     return memoryState;
   }
 
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return emptyLadder();
-    return JSON.parse(raw) as LadderState;
+    const store = k === "local" ? window.localStorage : window.sessionStorage;
+    const raw = store.getItem(KEY);
+    if (!raw) {
+      // also check memory in case we wrote there first
+      if (memoryState) return memoryState;
+      return emptyLadder();
+    }
+    const parsed = JSON.parse(raw) as LadderState;
+    memoryState = parsed; // keep memory in sync
+    return parsed;
   } catch {
     if (!memoryState) memoryState = emptyLadder();
     return memoryState;
@@ -42,11 +68,13 @@ function write(state: LadderState) {
   if (typeof window === "undefined") return;
   memoryState = state;
 
-  if (canUseStorage()) {
+  const k = kind();
+  if (k !== "memory") {
     try {
-      window.localStorage.setItem(KEY, JSON.stringify(state));
+      const store = k === "local" ? window.localStorage : window.sessionStorage;
+      store.setItem(KEY, JSON.stringify(state));
     } catch {
-      // quota or blocked — memory still holds it for this session
+      // memory still holds it
     }
   }
 
