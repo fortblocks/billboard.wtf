@@ -5,7 +5,7 @@ import { SCENES } from "@/lib/scenes";
 import { FaceCreative } from "./FaceCreative";
 import type { BoardEntry, Creative } from "@/lib/types";
 
-const ROTATE_MS = 9000;
+const ROTATE_MS = 10000;
 
 interface LiveBoardProps {
   creative: Creative | null;
@@ -15,9 +15,14 @@ interface LiveBoardProps {
 }
 
 /**
- * 1. Full-bleed environments (fade only)
- * 2. One fixed CSS billboard (never fades)
- * 3. White face = only editable region
+ * RETHINK — two layers only:
+ *
+ * 1. Atmosphere: full-bleed world photo, blurred + darkened so any
+ *    baked-in billboard disappears. Crossfades.
+ * 2. The Board: one sharp CSS billboard, fixed, never fades.
+ *    White face is the only editable surface.
+ *
+ * No transparent PNGs. No face-percentage math. No double boards.
  */
 export function LiveBoard({
   creative,
@@ -26,15 +31,15 @@ export function LiveBoard({
   showSceneCaption = true,
 }: LiveBoardProps) {
   const [sceneIndex, setSceneIndex] = useState(0);
-  const [fade, setFade] = useState(true);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setFade(false);
+      setVisible(false);
       setTimeout(() => {
         setSceneIndex((i) => (i + 1) % SCENES.length);
-        setFade(true);
-      }, 550);
+        setVisible(true);
+      }, 500);
     }, ROTATE_MS);
     return () => clearInterval(id);
   }, []);
@@ -42,48 +47,56 @@ export function LiveBoard({
   const scene = SCENES[sceneIndex];
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-6.5rem)]">
+    <div className="relative w-full min-h-[calc(100vh-6.5rem)] overflow-hidden bg-neutral-950">
       {SCENES.map((s, i) => (
         <div
           key={s.id}
           className="absolute inset-0 transition-opacity duration-700 ease-in-out"
           style={{
-            opacity: i === sceneIndex && fade ? 1 : 0,
-            backgroundImage: `url(${s.src})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            opacity: i === sceneIndex && visible ? 1 : 0,
           }}
-        />
+        >
+          <div
+            className="absolute inset-0 scale-110"
+            style={{
+              backgroundImage: `url(${s.src})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(14px) saturate(1.1) brightness(0.55)",
+            }}
+          />
+        </div>
       ))}
+
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)",
+            "radial-gradient(ellipse at 50% 45%, transparent 25%, rgba(0,0,0,0.55) 100%)",
         }}
       />
 
-      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-3 sm:px-6 lg:px-12">
-        <div className="w-full max-w-[min(100%,1200px)]">
+      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-4 sm:px-8 lg:px-16">
+        <div className="w-full max-w-[1100px]">
           <div
-            className="rounded-[2px]"
+            className="rounded-sm"
             style={{
               background:
-                "linear-gradient(160deg, #d4d4d4 0%, #9a9a9a 45%, #b8b8b8 100%)",
-              padding: "5px",
+                "linear-gradient(145deg, #e8e8e8 0%, #a0a0a0 40%, #c8c8c8 70%, #909090 100%)",
+              padding: "6px",
               boxShadow:
-                "0 25px 50px -12px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.55)",
+                "0 30px 60px -15px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.6)",
             }}
           >
             <div
               style={{
-                background: "linear-gradient(180deg, #8a8a8a, #6e6e6e)",
-                padding: "3px",
+                background: "linear-gradient(180deg, #7a7a7a, #555)",
+                padding: "4px",
               }}
             >
               <div
                 className="relative w-full overflow-hidden bg-white"
-                style={{ aspectRatio: "2.4 / 1" }}
+                style={{ aspectRatio: "2.35 / 1" }}
               >
                 <FaceCreative
                   creative={creative}
@@ -94,38 +107,45 @@ export function LiveBoard({
           </div>
 
           <div
-            className="mx-auto h-[5px] w-[98%]"
+            className="mx-auto h-1.5 w-[97%]"
             style={{
-              background: "linear-gradient(180deg, #7a7a7a, #555)",
-              borderRadius: "0 0 2px 2px",
+              background: "linear-gradient(180deg, #666, #333)",
             }}
           />
 
           <div className="flex flex-col items-center">
-            <div className="h-2.5 w-11 bg-[#6a6a6a] sm:w-12" />
             <div
-              className="h-12 w-6 sm:h-14 sm:w-7"
+              className="h-3 w-12"
               style={{
-                background:
-                  "linear-gradient(90deg, #5a5a5a, #7a7a7a 40%, #4a4a4a)",
-                boxShadow:
-                  "inset 1px 0 0 rgba(255,255,255,0.12), inset -1px 0 0 rgba(0,0,0,0.25)",
+                background: "linear-gradient(180deg, #777, #555)",
               }}
             />
-            <div className="h-2 w-14 rounded-sm bg-[#3a3a3a]" />
+            <div
+              className="h-14 w-7 sm:h-16 sm:w-8"
+              style={{
+                background:
+                  "linear-gradient(90deg, #4a4a4a 0%, #6e6e6e 35%, #5a5a5a 65%, #3a3a3a 100%)",
+                boxShadow:
+                  "inset 1px 0 0 rgba(255,255,255,0.15), inset -1px 0 0 rgba(0,0,0,0.3)",
+              }}
+            />
+            <div
+              className="h-2.5 w-16 rounded-sm"
+              style={{
+                background: "linear-gradient(180deg, #444, #222)",
+              }}
+            />
           </div>
         </div>
       </div>
 
       {showSceneCaption && (
-        <p className="absolute bottom-3 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/50 sm:text-[11px]">
-          Board location:{" "}
-          <span className="text-white/70">{scene.location}</span>
+        <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-[11px] tracking-wider text-white/45">
+          {scene.location}
           {brand ? (
-            <>
-              {" "}· Now showing{" "}
-              <span className="text-white/90">{brand}</span>
-            </>
+            <span className="text-white/70">
+              {" "}· {brand}
+            </span>
           ) : null}
         </p>
       )}
@@ -138,7 +158,7 @@ export function BoardThumb({ entry }: { entry: BoardEntry }) {
     <div className="w-full">
       <div
         className="relative overflow-hidden rounded-sm border border-white/10 bg-white"
-        style={{ aspectRatio: "2.4 / 1" }}
+        style={{ aspectRatio: "2.35 / 1" }}
       >
         <FaceCreative creative={entry.creative} emptyLabel={entry.brand} />
       </div>
