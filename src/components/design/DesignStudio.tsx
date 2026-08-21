@@ -46,17 +46,51 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
       {
         id: uid(),
         type: "text",
-        text: "Welcome to the Billboard Builder.\n\nThis is your canvas — everything you place here becomes the poster on the live board. Add text, images, stickers. Layer them, scale them, make it yours.\n\nWhen it feels iconic, hit Lock & go live.",
+        text: "Welcome to the Billboard Builder",
         x: 6,
-        y: 12,
+        y: 10,
         w: 88,
-        h: 70,
+        h: 16,
         z: 1,
         rotation: 0,
-        fontFamily: "system-ui, sans-serif",
+        fontFamily: "Georgia, 'Times New Roman', serif",
+        fontSize: 3.6,
+        color: "#0a0a0a",
+        fontWeight: 700,
+        fontStyle: "normal",
+        align: "center",
+      },
+      {
+        id: uid(),
+        type: "text",
+        text: "This is your canvas. Everything you place here becomes the poster on the live board — text, images, stickers. Layer them, scale them, make it yours.",
+        x: 10,
+        y: 30,
+        w: 80,
+        h: 28,
+        z: 2,
+        rotation: 0,
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        fontSize: 2.0,
+        color: "#333333",
+        fontWeight: 400,
+        fontStyle: "normal",
+        align: "center",
+      },
+      {
+        id: uid(),
+        type: "text",
+        text: "When it feels iconic → Lock & go live",
+        x: 10,
+        y: 62,
+        w: 80,
+        h: 14,
+        z: 3,
+        rotation: 0,
+        fontFamily: "system-ui, -apple-system, sans-serif",
         fontSize: 2.2,
-        color: "#222222",
-        fontWeight: 500,
+        color: "#111111",
+        fontWeight: 600,
         fontStyle: "normal",
         align: "center",
       },
@@ -70,6 +104,11 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
   );
   const selected = layers.find((l) => l.id === selectedId) ?? null;
   const empty = layers.length === 0;
+  const WELCOME_SNIPPETS = [
+    "Welcome to the Billboard Builder",
+    "This is your canvas",
+    "When it feels iconic",
+  ];
   const onlyHints =
     layers.length > 0 &&
     layers.every(
@@ -77,7 +116,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         l.type === "text" &&
         (!!l.background ||
           (typeof l.text === "string" &&
-            l.text.startsWith("Welcome to the Billboard Builder")))
+            WELCOME_SNIPPETS.some((s) => l.text.startsWith(s))))
     );
   const showCenterPlus = empty || onlyHints;
 
@@ -124,7 +163,6 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     const rect = faceRef.current.getBoundingClientRect();
     const dx = ((e.clientX - dragStart.current.x) / rect.width) * 100;
     const dy = ((e.clientY - dragStart.current.y) / rect.height) * 100;
-    // Free position — overflow:hidden on face clips outside white
     updateLayer(selectedId, {
       x: dragStart.current.lx + dx,
       y: dragStart.current.ly + dy,
@@ -229,7 +267,6 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-neutral-950">
-      {/* LOCKED board size + placement — same as homepage LiveBoard */}
       <div className="absolute inset-0 flex items-end justify-center">
         <div
           className="relative"
@@ -246,15 +283,14 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             draggable={false}
           />
 
-          {/* White face only — all editing confined here */}
           <div
             ref={faceRef}
             className="absolute z-20 overflow-hidden"
             style={{
               left: FACE.left,
               top: FACE.top,
-              width: FACE.width,
-              height: FACE.height,
+              right: FACE.right,
+              bottom: FACE.bottom,
             }}
             onClick={() => {
               setSelectedId(null);
@@ -292,7 +328,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                 >
                   {layer.type === "text" && (
                     <div
-                      className="flex h-full w-full items-center px-[8%] py-[10%] leading-snug"
+                      className="flex h-full w-full items-center px-[6%] py-[8%] leading-snug"
                       style={{
                         justifyContent:
                           layer.align === "center"
@@ -401,35 +437,16 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <button
-                  type="button"
-                  onClick={addText}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
-                >
-                  Text
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
-                >
-                  Image
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPlusOpen(false);
-                    setSelectedId("__stickers__");
-                  }}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
-                >
-                  Sticker
-                </button>
+                <button type="button" onClick={addText}
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Text</button>
+                <button type="button" onClick={() => fileRef.current?.click()}
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Image</button>
+                <button type="button" onClick={() => { setPlusOpen(false); setSelectedId("__stickers__"); }}
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Sticker</button>
               </div>
             )}
           </div>
 
-          {/* Listing card — under left of board, clear of white */}
           <div
             className="absolute left-0 z-30"
             style={{ top: "66%", width: "min(300px, 28%)" }}
