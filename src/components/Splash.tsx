@@ -4,24 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 
 const SCENES = [
   {
-    src: "/splash/highway.jpg",
+    src: "/splash/arctic.jpg",
     line: "The internet needed a permanent surface.",
   },
   {
-    src: "/splash/city-night.jpg",
+    src: "/splash/city.jpg",
     line: "Some things should outlast the feed.",
   },
   {
     src: "/splash/desert.jpg",
     line: "Buy a piece of 2026 before it becomes history.",
-  },
-  {
-    src: "/splash/tokyo-rain.jpg",
-    line: "This space will still be here when the tools are gone.",
-  },
-  {
-    src: "/splash/mountains.jpg",
-    line: "Reserve your pixels. The board is finite.",
   },
 ];
 
@@ -52,7 +44,6 @@ export function Splash({ onEnter }: SplashProps) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black">
-      {/* Background scenes */}
       {SCENES.map((s, i) => (
         <div
           key={s.src}
@@ -66,39 +57,35 @@ export function Splash({ onEnter }: SplashProps) {
         />
       ))}
 
-      {/* Soft vignette */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
 
-      {/* Content */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-between px-6 py-12 text-center sm:py-16">
-        {/* Top wordmark */}
-        <div className="text-sm font-medium tracking-widest text-white/70">
-          billboard<span className="text-white/40">.wtf</span>
+      <div className="relative z-10 flex h-full flex-col items-center justify-between px-6 py-10 text-center sm:py-14">
+        <div className="text-sm font-medium tracking-widest text-white/80 drop-shadow">
+          billboard<span className="text-white/50">.wtf</span>
         </div>
 
-        {/* Main line */}
-        <div className="max-w-3xl">
+        <div className="flex max-w-4xl flex-1 items-center justify-center px-4">
           <p
-            className={`text-3xl font-light leading-tight tracking-tight text-white transition-opacity duration-500 sm:text-4xl md:text-5xl ${
+            className={`text-2xl font-light leading-snug tracking-tight text-neutral-900 transition-opacity duration-500 sm:text-3xl md:text-4xl lg:text-5xl ${
               fade ? "opacity-100" : "opacity-0"
             }`}
+            style={{ textShadow: "0 1px 2px rgba(255,255,255,0.8)" }}
           >
             {scene.line}
           </p>
         </div>
 
-        {/* CTA */}
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-3">
           <button
             onClick={onEnter}
-            className="group rounded-full border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-medium tracking-wide text-white backdrop-blur-md transition hover:border-white/60 hover:bg-white/20"
+            className="group rounded-full border border-white/40 bg-black/40 px-8 py-3.5 text-sm font-medium tracking-wide text-white backdrop-blur-md transition hover:border-white/70 hover:bg-black/60"
           >
             Enter the board
             <span className="ml-2 inline-block transition group-hover:translate-x-0.5">
               →
             </span>
           </button>
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-white/50">
             A permanent visual record of the builders of 2026
           </p>
         </div>
