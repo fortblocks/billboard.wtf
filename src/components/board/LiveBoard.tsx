@@ -7,12 +7,12 @@ import type { BoardEntry, Creative } from "@/lib/types";
 
 const ROTATE_MS = 9000;
 
-/** Face region inside board-frame.png (measured). */
+/** White face inside board-frame.png — measured, slightly inset into bezel. */
 const FACE = {
-  left: "2.4%",
-  top: "3.6%",
-  width: "95.2%",
-  height: "54.4%",
+  left: "3.2%",
+  top: "4.8%",
+  width: "93.6%",
+  height: "51.5%",
 };
 
 interface LiveBoardProps {
@@ -45,35 +45,36 @@ export function LiveBoard({
   const scene = SCENES[sceneIndex];
 
   return (
-    <div className="relative w-full max-w-[min(96vw,1100px)]">
-      <div className="relative overflow-hidden rounded-sm bg-neutral-900">
-        <div className="absolute inset-0">
-          {SCENES.map((s, i) => (
-            <div
-              key={s.id}
-              className="absolute inset-0 transition-opacity duration-700 ease-in-out"
-              style={{
-                opacity: i === sceneIndex && fade ? 1 : 0,
-                backgroundImage: `url(${s.src})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
-          ))}
-        </div>
+    <div className="w-full">
+      <div className="relative w-full min-h-[calc(100vh-7rem)]">
+        {SCENES.map((s, i) => (
+          <div
+            key={s.id}
+            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+            style={{
+              opacity: i === sceneIndex && fade ? 1 : 0,
+              backgroundImage: `url(${s.src})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+        ))}
 
-        <div className="relative z-10 mx-auto w-[min(100%,920px)] px-3 py-6 sm:py-8">
-          <div className="relative w-full">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/splash/board-frame.png"
-              alt=""
-              className="relative z-10 block h-auto w-full select-none"
-              draggable={false}
-            />
-
+        <div className="relative z-10 flex min-h-[calc(100vh-7rem)] items-center justify-center px-2 sm:px-6 lg:px-10">
+          <div
+            className="relative w-full"
+            style={{
+              aspectRatio: "905 / 594",
+              maxHeight: "calc(100vh - 8rem)",
+              maxWidth: "min(100%, calc((100vh - 8rem) * 905 / 594))",
+              backgroundImage: "url(/splash/board-frame.png)",
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
+          >
             <div
-              className="absolute z-20 overflow-hidden"
+              className="absolute overflow-hidden"
               style={{
                 left: FACE.left,
                 top: FACE.top,
@@ -91,13 +92,13 @@ export function LiveBoard({
       </div>
 
       {showSceneCaption && (
-        <p className="mt-3 text-center text-[10px] tracking-wide text-neutral-500 sm:text-[11px]">
+        <p className="relative z-10 -mt-2 text-center text-[10px] tracking-wide text-white/40 sm:text-[11px]">
           Board location:{" "}
-          <span className="text-neutral-400">{scene.location}</span>
+          <span className="text-white/55">{scene.location}</span>
           {brand ? (
             <>
               {" "}· Now showing{" "}
-              <span className="text-neutral-300">{brand}</span>
+              <span className="text-white/70">{brand}</span>
             </>
           ) : null}
         </p>
