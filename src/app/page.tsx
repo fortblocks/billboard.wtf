@@ -48,10 +48,10 @@ export default function HomePage() {
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
+    <div className="relative h-screen overflow-hidden bg-neutral-950 text-white">
       <SiteNav />
 
-      <main className="flex min-h-screen flex-col items-center justify-center px-3 pb-28 pt-16 sm:pb-24 sm:pt-20">
+      <main className="absolute inset-x-0 top-14 bottom-[5.5rem] sm:top-16 sm:bottom-24">
         <LiveBoard
           creative={viewing?.creative ?? null}
           brand={viewing?.brand}
@@ -59,7 +59,7 @@ export default function HomePage() {
         />
 
         {past.length > 0 && (
-          <div className="mt-4 flex items-center gap-3">
+          <div className="pointer-events-none absolute bottom-8 left-0 right-0 z-20 flex items-center justify-center gap-3">
             <button
               type="button"
               onClick={() => {
@@ -67,9 +67,9 @@ export default function HomePage() {
                 setHistoryIndex((i) => Math.min(i + 1, past.length - 1));
               }}
               disabled={showHistory && historyIndex >= past.length - 1}
-              className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-white/60 transition hover:border-white/30 hover:text-white/90 disabled:opacity-30"
+              className="pointer-events-auto rounded-full border border-white/15 bg-black/40 px-3 py-1 text-[11px] text-white/70 backdrop-blur transition hover:border-white/30 hover:text-white disabled:opacity-30"
             >
-              \u2190 Earlier
+              ← Earlier
             </button>
             <button
               type="button"
@@ -78,13 +78,13 @@ export default function HomePage() {
                 if (historyIndex <= 0) setShowHistory(false);
                 else setHistoryIndex((i) => i - 1);
               }}
-              className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-white/60 transition hover:border-white/30 hover:text-white/90"
+              className="pointer-events-auto rounded-full border border-white/15 bg-black/40 px-3 py-1 text-[11px] text-white/70 backdrop-blur transition hover:border-white/30 hover:text-white"
             >
-              {showHistory ? "Later \u2192" : "Live"}
+              {showHistory ? "Later →" : "Live"}
             </button>
             <Link
               href="/hall"
-              className="text-[11px] text-white/40 underline-offset-2 hover:text-white/70 hover:underline"
+              className="pointer-events-auto text-[11px] text-white/50 underline-offset-2 hover:text-white/80 hover:underline"
             >
               Full history
             </Link>
