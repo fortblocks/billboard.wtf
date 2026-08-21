@@ -7,7 +7,7 @@ import type { BoardEntry, Creative } from "@/lib/types";
 
 const ROTATE_MS = 9000;
 
-/** White face of board-frame.png after crop (994x571). */
+/** White face of board-frame.png (994x571) — locked. */
 const FACE = {
   left: "2.0%",
   top: "3.2%",
@@ -59,8 +59,13 @@ export function LiveBoard({
         />
       ))}
 
-      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-2 sm:px-3">
-        <div className="relative w-[min(96vw,1500px)]">
+      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-2 sm:px-4 md:px-6">
+        <div
+          className="relative"
+          style={{
+            width: "min(92vw, 1600px)",
+          }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
