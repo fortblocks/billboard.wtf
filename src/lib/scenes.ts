@@ -1,23 +1,24 @@
 import type { Scene } from "./types";
 
+/** Platform-owned worlds — environments only (no billboard in the plate). */
 export const SCENES: Scene[] = [
+  {
+    id: "arctic",
+    name: "The ice",
+    src: "/splash/env/arctic.jpg",
+    location: "Antarctica",
+  },
   {
     id: "city",
     name: "Downtown",
-    src: "/splash/city.jpg",
+    src: "/splash/env/city.jpg",
     location: "New York, USA",
   },
   {
     id: "desert",
     name: "Open desert",
-    src: "/splash/desert.jpg",
+    src: "/splash/env/desert.jpg",
     location: "Sahara",
-  },
-  {
-    id: "arctic",
-    name: "The ice",
-    src: "/splash/arctic.jpg",
-    location: "Antarctica",
   },
 ];
 
