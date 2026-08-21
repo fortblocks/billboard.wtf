@@ -14,10 +14,10 @@ export const STICKERS = [
 ];
 
 export const NOTES = [
-  { rot: -7, x: "3%", y: "6%", bg: "#FEF08A", text: "Tap + to add text — change size, colour & font." },
-  { rot: 5, x: "68%", y: "8%", bg: "#FBCFE8", text: "Drop a PNG or JPEG. Drag, resize, rotate." },
-  { rot: -4, x: "8%", y: "72%", bg: "#BBF7D0", text: "Stickers & emoji — park them anywhere." },
-  { rot: 3, x: "62%", y: "70%", bg: "#BFDBFE", text: "Lock & go live when the poster feels iconic." },
+  { rot: -6, x: "4%", y: "10%", bg: "#FEF08A", text: "Tap + to add text — change size, colour & font." },
+  { rot: 5, x: "70%", y: "12%", bg: "#FBCFE8", text: "Drop a PNG or JPEG. Drag, resize, rotate." },
+  { rot: -4, x: "5%", y: "68%", bg: "#BBF7D0", text: "Stickers & emoji — park them anywhere." },
+  { rot: 3, x: "68%", y: "66%", bg: "#BFDBFE", text: "Lock & go live when the poster feels iconic." },
 ];
 
 export function uid() {
