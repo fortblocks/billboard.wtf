@@ -7,12 +7,11 @@ import type { BoardEntry, Creative } from "@/lib/types";
 
 const ROTATE_MS = 9000;
 
-/** White face inside board-frame.png — measured, slightly inset into bezel. */
 const FACE = {
-  left: "3.2%",
-  top: "4.8%",
-  width: "93.6%",
-  height: "51.5%",
+  left: "2.8%",
+  top: "4.2%",
+  width: "94.4%",
+  height: "52.8%",
 };
 
 interface LiveBoardProps {
@@ -64,9 +63,9 @@ export function LiveBoard({
           <div
             className="relative w-full"
             style={{
-              aspectRatio: "905 / 594",
+              aspectRatio: "911 / 605",
               maxHeight: "calc(100vh - 8rem)",
-              maxWidth: "min(100%, calc((100vh - 8rem) * 905 / 594))",
+              maxWidth: "min(100%, calc((100vh - 8rem) * 911 / 605))",
               backgroundImage: "url(/splash/board-frame.png)",
               backgroundSize: "100% 100%",
               backgroundRepeat: "no-repeat",
