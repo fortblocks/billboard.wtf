@@ -11,7 +11,7 @@ import type {
 } from "@/lib/types";
 import { saveCreative, lockAndPublish, getState } from "@/lib/store";
 import { useRouter } from "next/navigation";
-import { BOARD_WIDTH, FACE } from "@/lib/boardGeometry";
+import { BOARD_WIDTH, FACE, STUDIO_OFFSET_Y } from "@/lib/boardGeometry";
 import {
   FONTS,
   STICKERS,
@@ -199,9 +199,16 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-3.5rem)] flex-col bg-neutral-950">
-      <div className="relative flex flex-1 flex-col items-center justify-end pb-6 pt-4">
-        <div className="relative" style={{ width: BOARD_WIDTH }}>
+    <div className="relative h-[calc(100vh-3.5rem)] w-full overflow-hidden bg-neutral-950">
+      {/* Same placement language as homepage: bottom-aligned board */}
+      <div className="absolute inset-0 flex items-end justify-center pb-20">
+        <div
+          className="relative"
+          style={{
+            width: BOARD_WIDTH,
+            transform: `translateY(${STUDIO_OFFSET_Y}px)`,
+          }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
@@ -210,7 +217,6 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             draggable={false}
           />
 
-          {/* Transparent face — white comes from the PNG only */}
           <div
             ref={faceRef}
             className="absolute z-20 overflow-hidden"
@@ -347,17 +353,11 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <button type="button" onClick={addText}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">
-                  Text
-                </button>
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Text</button>
                 <button type="button" onClick={() => fileRef.current?.click()}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">
-                  Image
-                </button>
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Image</button>
                 <button type="button" onClick={() => { setPlusOpen(false); setSelectedId("__stickers__"); }}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">
-                  Sticker
-                </button>
+                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200">Sticker</button>
               </div>
             )}
 
@@ -370,8 +370,11 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             ))}
           </div>
         </div>
+      </div>
 
-        <div className="mt-4 grid w-full gap-3 px-4 sm:grid-cols-[1fr_auto]" style={{ maxWidth: BOARD_WIDTH }}>
+      {/* Listing bar — overlaid at bottom, does not push the board up */}
+      <div className="absolute bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-neutral-950/90 px-4 py-3 backdrop-blur-sm">
+        <div className="mx-auto grid w-full gap-3 sm:grid-cols-[1fr_auto]" style={{ maxWidth: BOARD_WIDTH }}>
           <div className="flex flex-wrap items-end gap-3">
             <label className="min-w-[140px] flex-1">
               <span className="text-[10px] uppercase tracking-wider text-white/40">Name</span>
@@ -401,7 +404,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
       </div>
 
       {selected && selected.id !== "__stickers__" && (
-        <div className="fixed bottom-6 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-2 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
+        <div className="fixed bottom-24 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-2 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
           {selected.type === "text" && (
             <>
               <input value={selected.text} onChange={(e) => updateLayer(selected.id, { text: e.target.value })}
@@ -432,7 +435,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
       )}
 
       {selectedId === "__stickers__" && (
-        <div className="fixed bottom-6 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-1 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
+        <div className="fixed bottom-24 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-1 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
           {STICKERS.map((e) => (
             <button key={e} type="button" onClick={() => addSticker(e)}
               className="rounded-lg bg-white/5 px-2 py-1 text-xl hover:bg-white/15">{e}</button>
@@ -444,7 +447,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
 
       {!empty && (
         <button type="button" onClick={() => setPlusOpen((v) => !v)}
-          className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl text-neutral-900 shadow-lg transition hover:scale-105"
+          className="fixed bottom-24 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl text-neutral-900 shadow-lg transition hover:scale-105"
           aria-label="Add">+</button>
       )}
 
