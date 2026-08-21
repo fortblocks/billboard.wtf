@@ -7,24 +7,13 @@ interface TopBarProps {
 
 export function TopBar({ panelOpen, onTogglePanel }: TopBarProps) {
   return (
-    <header className="pointer-events-none absolute top-0 left-0 right-0 z-40 flex h-14 items-center justify-between px-4">
-      <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-md border border-white/10">
-        <span className="text-sm font-medium tracking-tight text-white">
-          billboard<span className="text-white/50">.wtf</span>
-        </span>
-        <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] text-white/60">
-          2026
-        </span>
-      </div>
-
-      <div className="pointer-events-auto flex items-center gap-2">
-        <button
-          onClick={onTogglePanel}
-          className="rounded-full bg-black/50 px-3 py-1.5 text-sm text-white/80 backdrop-blur-md border border-white/10 transition hover:bg-black/70 hover:text-white"
-        >
-          {panelOpen ? "Close" : "Menu"}
-        </button>
-      </div>
-    </header>
+    <div className="pointer-events-none absolute right-3 top-3 z-30 flex items-center gap-2 sm:right-5 sm:top-5">
+      <button
+        onClick={onTogglePanel}
+        className="pointer-events-auto rounded-full border border-neutral-400/40 bg-white/70 px-4 py-2 text-xs font-medium tracking-wide text-neutral-700 shadow-sm backdrop-blur-md transition hover:bg-white/90"
+      >
+        {panelOpen ? "Close" : "Menu"}
+      </button>
+    </div>
   );
 }

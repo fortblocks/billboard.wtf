@@ -5,6 +5,7 @@ import { GridCanvas } from "@/components/Grid/GridCanvas";
 import { SlidingPanel } from "@/components/Panel/SlidingPanel";
 import { TopBar } from "@/components/TopBar";
 import { Splash } from "@/components/Splash";
+import { BillboardStage } from "@/components/BillboardStage";
 
 const COOKIE_KEY = "billboard_wtf_seen";
 
@@ -42,22 +43,24 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-[#0a0a0a]">
+    <div className="relative h-screen w-screen overflow-hidden">
       <main className="absolute inset-0">
-        <GridCanvas
-          onSelectEmpty={() => {
-            setPanelView("claim");
-            setPanelOpen(true);
-          }}
-          onSelectCrown={() => {
-            setPanelView("crown");
-            setPanelOpen(true);
-          }}
-          onSelectPlot={() => {
-            setPanelView("card");
-            setPanelOpen(true);
-          }}
-        />
+        <BillboardStage>
+          <GridCanvas
+            onSelectEmpty={() => {
+              setPanelView("claim");
+              setPanelOpen(true);
+            }}
+            onSelectCrown={() => {
+              setPanelView("crown");
+              setPanelOpen(true);
+            }}
+            onSelectPlot={() => {
+              setPanelView("card");
+              setPanelOpen(true);
+            }}
+          />
+        </BillboardStage>
       </main>
 
       <TopBar
