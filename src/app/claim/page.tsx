@@ -12,17 +12,32 @@ export default function ClaimPage() {
   const [brand, setBrand] = useState("");
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setPrice(getState().currentPrice);
+    try {
+      setPrice(getState().currentPrice);
+    } catch {
+      setPrice(1);
+    }
   }, []);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!brand.trim() || busy) return;
+    setError(null);
     setBusy(true);
-    const entry = claimSlot({ brand, url });
-    router.push(`/design/${entry.id}`);
+    try {
+      const cleanUrl =
+        url.trim() && url.trim() !== "https://" ? url.trim() : undefined;
+      const entry = claimSlot({ brand: brand.trim(), url: cleanUrl });
+      // Hard navigate so design page always loads fresh
+      window.location.href = `/design/${entry.id}`;
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setBusy(false);
+    }
   };
 
   return (
@@ -57,7 +72,8 @@ export default function ClaimPage() {
               Website <span className="text-white/30">(optional)</span>
             </span>
             <input
-              type="url"
+              type="text"
+              inputMode="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://"
@@ -65,17 +81,23 @@ export default function ClaimPage() {
             />
           </label>
 
+          {error && (
+            <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+              {error}
+            </p>
+          )}
+
           <button
             type="submit"
             disabled={busy || !brand.trim()}
             className="mt-2 w-full rounded-full bg-white py-3 text-sm font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
           >
-            {busy ? "Claiming\u2026" : `Continue to design studio \u2014 $${price}`}
+            {busy ? "Claiming..." : `Continue to design studio - $${price}`}
           </button>
         </form>
 
         <p className="mt-6 text-center text-[11px] text-white/30">
-          Demo mode \u2014 no real payment yet.{" "}
+          Demo mode - no real payment yet.{" "}
           <Link href="/" className="underline hover:text-white/50">
             Back to board
           </Link>
