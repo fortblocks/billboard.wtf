@@ -1,23 +1,16 @@
 import type { Layer } from "@/lib/types";
 
 export const FONTS = [
-  { label: "Sans", value: "system-ui, sans-serif" },
-  { label: "Serif", value: "Georgia, serif" },
-  { label: "Mono", value: "ui-monospace, monospace" },
-  { label: "Impact", value: "Impact, Haettenschweiler, sans-serif" },
-  { label: "Display", value: "'Arial Black', sans-serif" },
+  { label: "Impact", value: "Impact, Haettenschweiler, 'Arial Black', sans-serif" },
+  { label: "Display", value: "'Arial Black', 'Helvetica Bold', sans-serif" },
+  { label: "Sans", value: "system-ui, -apple-system, sans-serif" },
+  { label: "Serif", value: "Georgia, 'Times New Roman', serif" },
+  { label: "Mono", value: "ui-monospace, 'SF Mono', monospace" },
 ];
 
 export const STICKERS = [
   "\uD83D\uDD25", "\u2728", "\uD83D\uDE80", "\uD83D\uDC8E", "\uD83C\uDFAF", "\uD83D\uDC51", "\u26A1", "\uD83C\uDF1F", "\u2764\uFE0F", "\uD83C\uDF89",
   "\uD83E\uDD84", "\uD83C\uDF08", "\uD83D\uDC80", "\uD83E\uDDE0", "\uD83D\uDC40", "\uD83D\uDDA4", "\uD83D\uDCAF", "\uD83E\uDEE1", "\uD83E\uDEE0", "\uD83D\uDC7B",
-];
-
-export const NOTES = [
-  { rot: -6, x: "4%", y: "10%", bg: "#FEF08A", text: "Tap + to add text — change size, colour & font." },
-  { rot: 5, x: "70%", y: "12%", bg: "#FBCFE8", text: "Drop a PNG or JPEG. Drag, resize, rotate." },
-  { rot: -4, x: "5%", y: "68%", bg: "#BBF7D0", text: "Stickers & emoji — park them anywhere." },
-  { rot: 3, x: "68%", y: "66%", bg: "#BFDBFE", text: "Lock & go live when the poster feels iconic." },
 ];
 
 export function uid() {
@@ -73,8 +66,16 @@ export async function rasterizeFace(
     const lh = (layer.h / 100) * rect.height;
     if (layer.type === "text") {
       ctx.save();
+      if (layer.background) {
+        ctx.fillStyle = layer.background;
+        const r = Math.min(lh * 0.08, 8);
+        roundRect(ctx, lx, ly, lw, lh, r);
+        ctx.fill();
+      }
       ctx.fillStyle = layer.color;
-      ctx.font = `${layer.fontStyle === "italic" ? "italic " : ""}${layer.fontWeight} ${Math.max(12, (layer.fontSize / 100) * rect.height * 4)}px ${layer.fontFamily}`;
+      // fontSize is in vh units in the UI; approximate for export relative to face height
+      const px = Math.max(12, (layer.fontSize / 100) * rect.height * 4);
+      ctx.font = `${layer.fontStyle === "italic" ? "italic " : ""}${layer.fontWeight} ${px}px ${layer.fontFamily}`;
       ctx.textAlign = layer.align;
       ctx.textBaseline = "middle";
       const tx =
@@ -83,7 +84,13 @@ export async function rasterizeFace(
           : layer.align === "right"
             ? lx + lw
             : lx;
-      ctx.fillText(layer.text, tx, ly + lh / 2, lw);
+      // multi-line support
+      const lines = String(layer.text).split("\n");
+      const lineH = px * 1.15;
+      const startY = ly + lh / 2 - ((lines.length - 1) * lineH) / 2;
+      lines.forEach((line, i) => {
+        ctx.fillText(line, tx, startY + i * lineH, lw);
+      });
       ctx.restore();
     } else if (layer.type === "sticker") {
       ctx.font = `${lh * 0.8}px serif`;
