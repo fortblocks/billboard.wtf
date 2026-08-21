@@ -35,33 +35,39 @@ export default function DesignPage() {
     );
   }
 
-  if (entry.status === "live" || entry.status === "hall" || entry.status === "locked") {
+  if (
+    entry.status === "live" ||
+    entry.status === "hall" ||
+    entry.status === "locked"
+  ) {
     return (
-      <div className="min-h-screen bg-neutral-950 text-white">
+      <div className="relative h-screen overflow-hidden bg-neutral-950 text-white">
         <SiteNav />
-        <main className="mx-auto max-w-md px-4 pb-16 pt-24 text-center">
-          <p className="text-xs uppercase tracking-wider text-white/40">
-            Already published
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold">{entry.brand}</h1>
-          <p className="mt-2 text-sm text-white/50">
-            This board is locked in the Hall of Fame.
-          </p>
-          <Link
-            href="/"
-            className="mt-8 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-medium text-neutral-900"
-          >
-            Back to the board
-          </Link>
+        <main className="absolute inset-x-0 bottom-0 top-14 flex items-center justify-center sm:top-16">
+          <div className="mx-auto max-w-md px-4 text-center">
+            <p className="text-xs uppercase tracking-wider text-white/40">
+              Already published
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold">{entry.brand}</h1>
+            <p className="mt-2 text-sm text-white/50">
+              This board is locked in the Hall of Fame.
+            </p>
+            <Link
+              href="/"
+              className="mt-8 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-medium text-neutral-900"
+            >
+              Back to the board
+            </Link>
+          </div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
+    <div className="relative h-screen overflow-hidden bg-neutral-950 text-white">
       <SiteNav />
-      <main className="pt-16 sm:pt-20">
+      <main className="absolute inset-x-0 bottom-0 top-14 sm:top-16">
         <DesignStudio entry={entry} />
       </main>
     </div>
