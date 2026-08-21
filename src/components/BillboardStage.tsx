@@ -8,40 +8,44 @@ interface BillboardStageProps {
 
 /**
  * Physical billboard chrome matching the splash design language.
- * The interactive grid sits in the white face.
+ * The interactive grid sits in the face.
  */
 export function BillboardStage({ children }: BillboardStageProps) {
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center bg-[#e8e8e8]">
-      {/* Soft studio gradient */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#f0f0f0] via-[#e4e4e4] to-[#d8d8d8]" />
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#dedede]">
+      {/* Studio ground */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#eaeaea] via-[#ddd] to-[#cfcfcf]" />
 
-      {/* Billboard unit */}
-      <div className="relative z-10 flex w-full max-w-[min(92vw,1100px)] flex-col items-center px-4">
-        {/* Logo above the board */}
-        <div className="mb-4 text-center text-xs font-medium tracking-[0.25em] text-neutral-500 sm:mb-5 sm:text-sm">
+      {/* Billboard unit — constrained so frame + pillar always fit */}
+      <div className="relative z-10 flex max-h-[92vh] w-full max-w-[min(88vw,920px)] flex-col items-center px-3">
+        {/* Logo */}
+        <div className="mb-3 shrink-0 text-center text-[11px] font-medium tracking-[0.28em] text-neutral-500 sm:mb-4 sm:text-xs">
           billboard<span className="text-neutral-400">.wtf</span>
           <span className="mx-2 text-neutral-300">/</span>
           <span className="text-neutral-400">2026</span>
         </div>
 
-        {/* Frame + face */}
-        <div className="relative w-full">
-          {/* Outer metal frame */}
+        {/* Frame stack */}
+        <div className="relative w-full shrink min-h-0">
+          {/* Outer metal */}
           <div
-            className="relative overflow-hidden rounded-[2px] bg-[#c5c5c5] p-[5px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35),0_8px_20px_-8px_rgba(0,0,0,0.2)] sm:p-[6px]"
+            className="relative bg-[#b8b8b8] p-[7px] sm:p-[9px]"
             style={{
+              borderRadius: 3,
               boxShadow:
-                "0 25px 60px -15px rgba(0,0,0,0.35), 0 8px 20px -8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4)",
+                "0 28px 50px -18px rgba(0,0,0,0.4), 0 10px 24px -10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.12)",
             }}
           >
-            {/* Inner bevel */}
-            <div className="rounded-[1px] bg-[#a8a8a8] p-[2px] sm:p-[3px]">
-              {/* The face — square aspect for the 1500×1500 grid */}
+            {/* Mid metal */}
+            <div
+              className="bg-[#9e9e9e] p-[3px] sm:p-[4px]"
+              style={{ borderRadius: 2 }}
+            >
+              {/* Face */}
               <div
                 className="relative aspect-square w-full overflow-hidden bg-[#0c0c0c]"
                 style={{
-                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.15)",
+                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.25)",
                 }}
               >
                 {children}
@@ -49,26 +53,35 @@ export function BillboardStage({ children }: BillboardStageProps) {
             </div>
           </div>
 
-          {/* Underside lip */}
-          <div className="mx-auto h-[6px] w-[98%] rounded-b-sm bg-gradient-to-b from-[#9a9a9a] to-[#7a7a7a] shadow-sm" />
+          {/* Lip under frame */}
+          <div
+            className="mx-auto h-[8px] w-[97%] bg-gradient-to-b from-[#8f8f8f] to-[#6f6f6f]"
+            style={{
+              borderRadius: "0 0 3px 3px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+            }}
+          />
         </div>
 
         {/* Pillar */}
-        <div className="flex flex-col items-center">
-          <div className="h-3 w-10 bg-gradient-to-b from-[#8a8a8a] to-[#6e6e6e] sm:h-4 sm:w-12" />
+        <div className="flex shrink-0 flex-col items-center">
+          <div className="h-3 w-11 bg-gradient-to-b from-[#8a8a8a] to-[#6a6a6a] sm:h-4 sm:w-12" />
           <div
-            className="h-16 w-7 bg-gradient-to-b from-[#7a7a7a] via-[#6a6a6a] to-[#5a5a5a] sm:h-20 sm:w-8"
+            className="h-14 w-8 bg-gradient-to-b from-[#757575] via-[#656565] to-[#555] sm:h-16 sm:w-9"
             style={{
-              boxShadow: "inset 1px 0 0 rgba(255,255,255,0.15), inset -1px 0 0 rgba(0,0,0,0.2)",
+              boxShadow:
+                "inset 2px 0 0 rgba(255,255,255,0.18), inset -2px 0 0 rgba(0,0,0,0.25)",
             }}
           />
-          {/* Base plate */}
-          <div className="h-2 w-14 rounded-sm bg-gradient-to-b from-[#6a6a6a] to-[#4a4a4a] sm:h-2.5 sm:w-16" />
+          <div
+            className="h-2.5 w-16 rounded-sm bg-gradient-to-b from-[#5a5a5a] to-[#3f3f3f] sm:w-[72px]"
+            style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.25)" }}
+          />
         </div>
       </div>
 
       {/* Hint */}
-      <p className="absolute bottom-4 left-0 right-0 text-center text-[10px] tracking-wide text-neutral-400 sm:bottom-5 sm:text-[11px]">
+      <p className="absolute bottom-3 left-0 right-0 text-center text-[10px] tracking-wide text-neutral-500 sm:bottom-4 sm:text-[11px]">
         Drag to select · Scroll to zoom · Space + drag to pan
       </p>
     </div>
