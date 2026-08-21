@@ -11,7 +11,7 @@ import type {
 } from "@/lib/types";
 import { saveCreative, lockAndPublish, getState } from "@/lib/store";
 import { useRouter } from "next/navigation";
-import { BOARD_WIDTH, FACE, STUDIO_OFFSET_Y } from "@/lib/boardGeometry";
+import { BOARD_WIDTH, BOARD_OFFSET_Y, FACE } from "@/lib/boardGeometry";
 import {
   FONTS,
   STICKERS,
@@ -199,14 +199,14 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
   };
 
   return (
-    <div className="relative h-[calc(100vh-3.5rem)] w-full overflow-hidden bg-neutral-950">
-      {/* Same placement language as homepage: bottom-aligned board */}
-      <div className="absolute inset-0 flex items-end justify-center pb-20">
+    <div className="relative h-full w-full overflow-hidden bg-neutral-950">
+      {/* Exact same board placement as homepage LiveBoard */}
+      <div className="absolute inset-0 flex items-end justify-center">
         <div
           className="relative"
           style={{
             width: BOARD_WIDTH,
-            transform: `translateY(${STUDIO_OFFSET_Y}px)`,
+            transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -369,42 +369,38 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
               </div>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* Listing bar — overlaid at bottom, does not push the board up */}
-      <div className="absolute bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-neutral-950/90 px-4 py-3 backdrop-blur-sm">
-        <div className="mx-auto grid w-full gap-3 sm:grid-cols-[1fr_auto]" style={{ maxWidth: BOARD_WIDTH }}>
-          <div className="flex flex-wrap items-end gap-3">
-            <label className="min-w-[140px] flex-1">
+          {/* Listing stacked under the left side of the board */}
+          <div className="absolute left-0 top-[58%] z-30 w-[min(260px,32%)] space-y-2">
+            <label className="block">
               <span className="text-[10px] uppercase tracking-wider text-white/40">Name</span>
               <input value={brand} onChange={(e) => setBrand(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-white/35" placeholder="Brand" />
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/50 px-3 py-2 text-sm text-white outline-none backdrop-blur focus:border-white/35" placeholder="Brand" />
             </label>
-            <label className="min-w-[140px] flex-1">
+            <label className="block">
               <span className="text-[10px] uppercase tracking-wider text-white/40">URL</span>
               <input value={url} onChange={(e) => setUrl(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-white/35" placeholder="https://" />
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/50 px-3 py-2 text-sm text-white outline-none backdrop-blur focus:border-white/35" placeholder="https://" />
             </label>
-            <label className="min-w-[120px]">
+            <label className="block">
               <span className="text-[10px] uppercase tracking-wider text-white/40">X</span>
               <input value={xHandle} onChange={(e) => setXHandle(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-white/35" placeholder="@you" />
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/50 px-3 py-2 text-sm text-white outline-none backdrop-blur focus:border-white/35" placeholder="@you" />
             </label>
-          </div>
-          <div className="flex flex-wrap items-end gap-2">
-            <button type="button" onClick={shareOnX}
-              className="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:border-white/40">Share on X</button>
-            <button type="button" onClick={saveDraft}
-              className="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:border-white/40">{savedFlash ? "Saved" : "Save"}</button>
-            <button type="button" onClick={lock} disabled={!brand.trim()}
-              className="rounded-full bg-white px-5 py-2 text-xs font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40">Lock & go live</button>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button type="button" onClick={shareOnX}
+                className="rounded-full border border-white/20 px-3 py-1.5 text-[11px] text-white/80 transition hover:border-white/40">Share on X</button>
+              <button type="button" onClick={saveDraft}
+                className="rounded-full border border-white/20 px-3 py-1.5 text-[11px] text-white/80 transition hover:border-white/40">{savedFlash ? "Saved" : "Save"}</button>
+              <button type="button" onClick={lock} disabled={!brand.trim()}
+                className="rounded-full bg-white px-4 py-1.5 text-[11px] font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40">Lock & go live</button>
+            </div>
           </div>
         </div>
       </div>
 
       {selected && selected.id !== "__stickers__" && (
-        <div className="fixed bottom-24 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-2 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
+        <div className="fixed bottom-8 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-2 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
           {selected.type === "text" && (
             <>
               <input value={selected.text} onChange={(e) => updateLayer(selected.id, { text: e.target.value })}
@@ -435,7 +431,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
       )}
 
       {selectedId === "__stickers__" && (
-        <div className="fixed bottom-24 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-1 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
+        <div className="fixed bottom-8 left-1/2 z-50 flex max-w-[95vw] -translate-x-1/2 flex-wrap items-center gap-1 rounded-2xl border border-white/15 bg-neutral-900/95 px-4 py-3 shadow-2xl backdrop-blur">
           {STICKERS.map((e) => (
             <button key={e} type="button" onClick={() => addSticker(e)}
               className="rounded-lg bg-white/5 px-2 py-1 text-xl hover:bg-white/15">{e}</button>
@@ -447,7 +443,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
 
       {!empty && (
         <button type="button" onClick={() => setPlusOpen((v) => !v)}
-          className="fixed bottom-24 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl text-neutral-900 shadow-lg transition hover:scale-105"
+          className="fixed bottom-8 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl text-neutral-900 shadow-lg transition hover:scale-105"
           aria-label="Add">+</button>
       )}
 
