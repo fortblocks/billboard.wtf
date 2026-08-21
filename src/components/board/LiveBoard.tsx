@@ -45,7 +45,7 @@ export function LiveBoard({
   const scene = SCENES[sceneIndex];
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-6.5rem)] overflow-hidden bg-neutral-950">
+    <div className="relative h-full w-full overflow-hidden bg-neutral-950">
       {SCENES.map((s, i) => (
         <div
           key={s.id}
@@ -59,18 +59,13 @@ export function LiveBoard({
         />
       ))}
 
-      <div className="relative z-10 flex min-h-[calc(100vh-6.5rem)] items-center justify-center px-2 sm:px-4 md:px-6">
-        <div
-          className="relative"
-          style={{
-            width: "min(92vw, 1600px)",
-          }}
-        >
+      <div className="relative z-10 flex h-full w-full items-end justify-center px-3 pb-1 pt-2 sm:px-5 sm:pb-2 sm:pt-3">
+        <div className="relative inline-block max-h-full max-w-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/splash/board-frame.png"
             alt=""
-            className="block h-auto w-full select-none"
+            className="block max-h-[calc(100vh-6.5rem-1rem)] max-w-[min(94vw,1600px)] w-auto h-auto select-none"
             draggable={false}
           />
 
@@ -92,9 +87,9 @@ export function LiveBoard({
       </div>
 
       {showSceneCaption && (
-        <p className="absolute bottom-3 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/55 sm:text-[11px]">
+        <p className="pointer-events-none absolute bottom-1 left-0 right-0 z-10 text-center text-[10px] tracking-wide text-white/50 sm:text-[11px]">
           {scene.location}
-          {brand ? <span className="text-white/80"> · {brand}</span> : null}
+          {brand ? <span className="text-white/75"> · {brand}</span> : null}
         </p>
       )}
     </div>
