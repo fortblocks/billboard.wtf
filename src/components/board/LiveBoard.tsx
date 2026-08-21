@@ -4,20 +4,10 @@ import { useEffect, useState } from "react";
 import { SCENES } from "@/lib/scenes";
 import { FaceCreative } from "./FaceCreative";
 import type { BoardEntry, Creative } from "@/lib/types";
+import { BOARD_WIDTH, BOARD_OFFSET_Y, FACE } from "@/lib/boardGeometry";
 
 const ROTATE_MS = 10000;
 const FADE_MS = 1800;
-
-/** White face of board-frame.png (994×571) — measured from PNG white pixels. */
-const FACE = {
-  left: "2%",
-  top: "3.2%",
-  width: "96%",
-  height: "56.4%",
-};
-
-/** Board vertical offset — positive = lower on screen. */
-const BOARD_OFFSET_Y = 120;
 
 interface LiveBoardProps {
   creative: Creative | null;
@@ -63,7 +53,7 @@ export function LiveBoard({
         <div
           className="relative"
           style={{
-            width: "min(96vw, 1700px)",
+            width: BOARD_WIDTH,
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
