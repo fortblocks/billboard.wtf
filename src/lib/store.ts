@@ -3,7 +3,8 @@
 import type { BoardEntry, Creative, LadderState } from "./types";
 import { emptyLadder, nextHallNumber } from "./ladder";
 
-const KEY = "billboard_wtf_ladder_v1";
+/** Bumped to v2 so stale v1 creatives (old post-it / welcome drafts) cannot override new claims. */
+const KEY = "billboard_wtf_ladder_v2";
 
 /** In-memory fallback when both localStorage and sessionStorage are blocked */
 let memoryState: LadderState | null = null;
@@ -128,6 +129,7 @@ export function claimSlot(input: {
     url: input.url?.trim() || undefined,
     amountPaid: price,
     originalPaid: price,
+    // Always start empty — DesignStudio seeds welcome; never inherit old creative.
     creative: null,
     status: "draft",
     createdAt: new Date().toISOString(),
@@ -209,10 +211,10 @@ export function addPioneer(brand: string, url?: string): BoardEntry {
           w: 80,
           h: 24,
           z: 1,
-          fontFamily: "system-ui",
+          fontFamily: "Impact, Haettenschweiler, 'Arial Black', sans-serif",
           fontSize: 8,
           color: "#111111",
-          fontWeight: 600,
+          fontWeight: 900,
           fontStyle: "normal",
           align: "center",
         },
