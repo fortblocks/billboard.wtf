@@ -19,7 +19,7 @@ export default function ClaimPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!brand.trim()) return;
+    if (!brand.trim() || busy) return;
     setBusy(true);
     const entry = claimSlot({ brand, url });
     router.push(`/design/${entry.id}`);
@@ -35,9 +35,10 @@ export default function ClaimPage() {
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           Pay ${price}
         </h1>
-        <p className="mt-2 text-sm text-white/50">
-          You go live after you design and lock your board. Every claim raises
-          the next price by $1. Bumps climb the ladder too.
+        <p className="mt-3 text-sm leading-relaxed text-white/50">
+          Design your face, lock it, and go live. Every claim raises the next
+          price by $1. Previous owners can bump back to the top by paying the
+          difference.
         </p>
 
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
@@ -47,35 +48,36 @@ export default function ClaimPage() {
               required
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-white/40"
-              placeholder="Acme"
+              placeholder="Acme Labs"
+              className="mt-1.5 w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-3 text-sm outline-none transition focus:border-white/40"
             />
           </label>
           <label className="block">
-            <span className="text-xs text-white/50">Link (optional)</span>
+            <span className="text-xs text-white/50">
+              Website <span className="text-white/30">(optional)</span>
+            </span>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-white/40"
               placeholder="https://"
+              className="mt-1.5 w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-3 text-sm outline-none transition focus:border-white/40"
             />
           </label>
+
           <button
             type="submit"
             disabled={busy || !brand.trim()}
-            className="w-full rounded-full bg-white py-3 text-sm font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
+            className="mt-2 w-full rounded-full bg-white py-3 text-sm font-medium text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
           >
-            {busy ? "Continuing\u2026" : `Continue to design \u2014 $${price}`}
+            {busy ? "Claiming\u2026" : `Continue to design studio \u2014 $${price}`}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-[11px] text-white/35">
-          Payment is mocked in this build. Ladder and design are real.
-        </p>
-        <p className="mt-2 text-center text-[11px]">
-          <Link href="/" className="text-white/50 hover:text-white/80">
-            \u2190 Back to board
+        <p className="mt-6 text-center text-[11px] text-white/30">
+          Demo mode \u2014 no real payment yet.{" "}
+          <Link href="/" className="underline hover:text-white/50">
+            Back to board
           </Link>
         </p>
       </main>
