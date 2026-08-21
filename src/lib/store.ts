@@ -5,21 +5,56 @@ import { emptyLadder, nextHallNumber } from "./ladder";
 
 const KEY = "billboard_wtf_ladder_v1";
 
+/** In-memory fallback when localStorage is blocked (Brave shields, private mode, etc.) */
+let memoryState: LadderState | null = null;
+
+function canUseStorage(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const k = "__bb_test__";
+    window.localStorage.setItem(k, "1");
+    window.localStorage.removeItem(k);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function read(): LadderState {
   if (typeof window === "undefined") return emptyLadder();
+
+  if (!canUseStorage()) {
+    if (!memoryState) memoryState = emptyLadder();
+    return memoryState;
+  }
+
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = window.localStorage.getItem(KEY);
     if (!raw) return emptyLadder();
     return JSON.parse(raw) as LadderState;
   } catch {
-    return emptyLadder();
+    if (!memoryState) memoryState = emptyLadder();
+    return memoryState;
   }
 }
 
 function write(state: LadderState) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(KEY, JSON.stringify(state));
-  window.dispatchEvent(new Event("billboard-store"));
+  memoryState = state;
+
+  if (canUseStorage()) {
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(state));
+    } catch {
+      // quota or blocked — memory still holds it for this session
+    }
+  }
+
+  try {
+    window.dispatchEvent(new Event("billboard-store"));
+  } catch {
+    // ignore
+  }
 }
 
 export function getState(): LadderState {
@@ -27,12 +62,21 @@ export function getState(): LadderState {
 }
 
 export function subscribe(cb: () => void) {
+  if (typeof window === "undefined") return () => {};
   const handler = () => cb();
   window.addEventListener("billboard-store", handler);
-  window.addEventListener("storage", handler);
+  try {
+    window.addEventListener("storage", handler);
+  } catch {
+    // ignore
+  }
   return () => {
     window.removeEventListener("billboard-store", handler);
-    window.removeEventListener("storage", handler);
+    try {
+      window.removeEventListener("storage", handler);
+    } catch {
+      // ignore
+    }
   };
 }
 
