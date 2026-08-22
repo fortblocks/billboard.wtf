@@ -1,4 +1,4 @@
-export type LayerType = "text" | "image" | "sticker" | "shape" | "button";
+export type LayerType = "text" | "image" | "sticker" | "shape" | "button" | "draw";
 
 export interface BaseLayer {
   id: string;
@@ -7,9 +7,15 @@ export interface BaseLayer {
   y: number;
   w: number;
   h: number;
+  /** Degrees */
   rotation?: number;
+  /** 0–1 */
   opacity?: number;
   z: number;
+  locked?: boolean;
+  visible?: boolean;
+  flipX?: boolean;
+  flipY?: boolean;
 }
 
 export interface TextLayer extends BaseLayer {
@@ -49,12 +55,18 @@ export interface ButtonLayer extends BaseLayer {
   color: string;
 }
 
+export interface DrawLayer extends BaseLayer {
+  type: "draw";
+  paths: { d: string; color: string; width: number }[];
+}
+
 export type Layer =
   | TextLayer
   | ImageLayer
   | StickerLayer
   | ShapeLayer
-  | ButtonLayer;
+  | ButtonLayer
+  | DrawLayer;
 
 export interface Creative {
   layers: Layer[];
