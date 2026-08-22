@@ -1,11 +1,25 @@
 import type { Layer } from "@/lib/types";
 
-export const FONTS = [
+/** Curated billboard font library — system + Google (loaded in layout). */
+export const FONTS: { label: string; value: string; sample?: string }[] = [
   { label: "Impact", value: "Impact, Haettenschweiler, 'Arial Black', sans-serif" },
-  { label: "Display", value: "'Arial Black', 'Helvetica Bold', sans-serif" },
-  { label: "Sans", value: "system-ui, -apple-system, sans-serif" },
-  { label: "Serif", value: "Georgia, 'Times New Roman', serif" },
-  { label: "Mono", value: "ui-monospace, 'SF Mono', monospace" },
+  { label: "Anton", value: "var(--font-anton), Impact, sans-serif" },
+  { label: "Bebas", value: "var(--font-bebas), 'Arial Narrow', sans-serif" },
+  { label: "Oswald", value: "var(--font-oswald), 'Arial Narrow', sans-serif" },
+  { label: "Archivo Black", value: "var(--font-archivo), 'Arial Black', sans-serif" },
+  { label: "Black Ops", value: "var(--font-blackops), Impact, sans-serif" },
+  { label: "Russo One", value: "var(--font-russo), sans-serif" },
+  { label: "Bangers", value: "var(--font-bangers), Impact, sans-serif" },
+  { label: "Permanent Marker", value: "var(--font-marker), cursive" },
+  { label: "Playfair", value: "var(--font-playfair), Georgia, serif" },
+  { label: "Space Grotesk", value: "var(--font-space), system-ui, sans-serif" },
+  { label: "Inter", value: "var(--font-inter), system-ui, sans-serif" },
+  { label: "Geist Sans", value: "var(--font-geist-sans), system-ui, sans-serif" },
+  { label: "Geist Mono", value: "var(--font-geist-mono), ui-monospace, monospace" },
+  { label: "Georgia", value: "Georgia, 'Times New Roman', serif" },
+  { label: "System Sans", value: "system-ui, -apple-system, sans-serif" },
+  { label: "Arial Black", value: "'Arial Black', 'Helvetica Bold', sans-serif" },
+  { label: "Courier", value: "'Courier New', Courier, monospace" },
 ];
 
 export const STICKERS = [
@@ -73,9 +87,26 @@ export async function rasterizeFace(
         ctx.fill();
       }
       ctx.fillStyle = layer.color;
-      // fontSize is in vh units in the UI; approximate for export relative to face height
       const px = Math.max(12, (layer.fontSize / 100) * rect.height * 4);
-      ctx.font = `${layer.fontStyle === "italic" ? "italic " : ""}${layer.fontWeight} ${px}px ${layer.fontFamily}`;
+      // Resolve CSS vars for canvas (canvas can't use var())
+      let family = layer.fontFamily;
+      if (family.includes("var(")) {
+        family = family
+          .replace(/var\(--font-anton\)/g, "Anton")
+          .replace(/var\(--font-bebas\)/g, "Bebas Neue")
+          .replace(/var\(--font-oswald\)/g, "Oswald")
+          .replace(/var\(--font-archivo\)/g, "Archivo Black")
+          .replace(/var\(--font-blackops\)/g, "Black Ops One")
+          .replace(/var\(--font-russo\)/g, "Russo One")
+          .replace(/var\(--font-bangers\)/g, "Bangers")
+          .replace(/var\(--font-marker\)/g, "Permanent Marker")
+          .replace(/var\(--font-playfair\)/g, "Playfair Display")
+          .replace(/var\(--font-space\)/g, "Space Grotesk")
+          .replace(/var\(--font-inter\)/g, "Inter")
+          .replace(/var\(--font-geist-sans\)/g, "system-ui")
+          .replace(/var\(--font-geist-mono\)/g, "ui-monospace");
+      }
+      ctx.font = `${layer.fontStyle === "italic" ? "italic " : ""}${layer.fontWeight} ${px}px ${family}`;
       ctx.textAlign = layer.align;
       ctx.textBaseline = "middle";
       const tx =
@@ -84,7 +115,6 @@ export async function rasterizeFace(
           : layer.align === "right"
             ? lx + lw
             : lx;
-      // multi-line support
       const lines = String(layer.text).split("\n");
       const lineH = px * 1.15;
       const startY = ly + lh / 2 - ((lines.length - 1) * lineH) / 2;
