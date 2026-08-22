@@ -34,6 +34,10 @@ export interface TextLayer extends BaseLayer {
 export interface ImageLayer extends BaseLayer {
   type: "image";
   src: string;
+  /** cover | contain | fill — default cover */
+  objectFit?: "cover" | "contain" | "fill";
+  /** true when src is a video data URL / blob */
+  isVideo?: boolean;
 }
 
 export interface StickerLayer extends BaseLayer {
