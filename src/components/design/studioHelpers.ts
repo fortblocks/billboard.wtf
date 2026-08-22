@@ -22,10 +22,43 @@ export const FONTS: { label: string; value: string; sample?: string }[] = [
   { label: "Courier", value: "'Courier New', Courier, monospace" },
 ];
 
-export const STICKERS = [
-  "\uD83D\uDD25", "\u2728", "\uD83D\uDE80", "\uD83D\uDC8E", "\uD83C\uDFAF", "\uD83D\uDC51", "\u26A1", "\uD83C\uDF1F", "\u2764\uFE0F", "\uD83C\uDF89",
-  "\uD83E\uDD84", "\uD83C\uDF08", "\uD83D\uDC80", "\uD83E\uDDE0", "\uD83D\uDC40", "\uD83D\uDDA4", "\uD83D\uDCAF", "\uD83E\uDEE1", "\uD83E\uDEE0", "\uD83D\uDC7B",
+export type StickerPack = { id: string; label: string; items: string[] };
+
+export const STICKER_PACKS: StickerPack[] = [
+  {
+    id: "hot",
+    label: "Hot",
+    items: ["🔥", "✨", "🚀", "💎", "🎯", "👑", "⚡", "⭐", "❤️", "🎉", "💯", "💥", "🌟", "🏆", "💪"],
+  },
+  {
+    id: "faces",
+    label: "Faces",
+    items: ["😀", "😂", "🤣", "😍", "🤩", "😎", "🤔", "😱", "🥺", "😤", "🤯", "😈", "👻", "💀", "🤖"],
+  },
+  {
+    id: "hands",
+    label: "Hands",
+    items: ["👍", "👎", "👏", "🙌", "🤝", "✌️", "🤞", "🤟", "🤘", "👋", "🫡", "💪", "🫶", "✋", "🤙"],
+  },
+  {
+    id: "objects",
+    label: "Objects",
+    items: ["💰", "💵", "📱", "💻", "📷", "🎬", "🎵", "🎤", "🎧", "🎮", "🕹️", "🕶️", "🧢", "🍔", "🍕"],
+  },
+  {
+    id: "nature",
+    label: "Nature",
+    items: ["🌈", "☀️", "🌙", "🌊", "🌴", "🌸", "🍀", "🦋", "🐱", "🐶", "🦄", "🐸", "🐝", "🌍", "❄️"],
+  },
+  {
+    id: "symbols",
+    label: "Symbols",
+    items: ["✅", "❌", "⚠️", "🚫", "➡️", "⬆️", "⬇️", "⬅️", "♻️", "✳️", "❇️", "🔴", "🟢", "🔵", "⬛"],
+  },
 ];
+
+/** Flat list for quick toolbar swaps */
+export const STICKERS = STICKER_PACKS.flatMap((p) => p.items);
 
 export function uid() {
   return crypto.randomUUID();
@@ -271,14 +304,19 @@ export async function rasterizeFace(
       });
     } else if (layer.type === "draw") {
       withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+        ctx.save();
+        // paths stored in 0–100 face % space
+        ctx.translate(lx, ly);
+        ctx.scale(lw / 100, lh / 100);
         for (const p of layer.paths) {
           ctx.strokeStyle = p.color;
-          ctx.lineWidth = p.width;
+          ctx.lineWidth = (p.width / Math.max(lw, lh)) * 100 * 1.2;
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
           const path = new Path2D(p.d);
           ctx.stroke(path);
         }
+        ctx.restore();
       });
     }
   }
