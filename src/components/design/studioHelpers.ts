@@ -102,6 +102,74 @@ function withLayerTransform(
   ctx.restore();
 }
 
+function drawFitted(
+  ctx: CanvasRenderingContext2D,
+  img: CanvasImageSource,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  fit: "cover" | "contain" | "fill"
+) {
+  if (fit === "fill") {
+    ctx.drawImage(img, x, y, w, h);
+    return;
+  }
+  const iw =
+    (img as HTMLVideoElement).videoWidth ||
+    (img as HTMLImageElement).naturalWidth ||
+    (img as HTMLImageElement).width ||
+    w;
+  const ih =
+    (img as HTMLVideoElement).videoHeight ||
+    (img as HTMLImageElement).naturalHeight ||
+    (img as HTMLImageElement).height ||
+    h;
+  const scale = fit === "cover" ? Math.max(w / iw, h / ih) : Math.min(w / iw, h / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  const dx = x + (w - dw) / 2;
+  const dy = y + (h - dh) / 2;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  ctx.drawImage(img, dx, dy, dw, dh);
+  ctx.restore();
+}
+
+function videoFirstFrame(src: string): Promise<HTMLCanvasElement | null> {
+  return new Promise((resolve) => {
+    const v = document.createElement("video");
+    v.crossOrigin = "anonymous";
+    v.muted = true;
+    v.playsInline = true;
+    v.preload = "auto";
+    const done = () => {
+      try {
+        const c = document.createElement("canvas");
+        c.width = v.videoWidth || 1;
+        c.height = v.videoHeight || 1;
+        const cctx = c.getContext("2d");
+        if (!cctx || !c.width) {
+          resolve(null);
+          return;
+        }
+        cctx.drawImage(v, 0, 0);
+        resolve(c);
+      } catch {
+        resolve(null);
+      }
+    };
+    v.onloadeddata = () => {
+      v.currentTime = Math.min(0.1, (v.duration || 1) * 0.05);
+    };
+    v.onseeked = done;
+    v.onerror = () => resolve(null);
+    v.src = src;
+  });
+}
+
 export async function rasterizeFace(
   faceEl: HTMLDivElement,
   layers: Layer[]
@@ -163,9 +231,17 @@ export async function rasterizeFace(
       });
     } else if (layer.type === "image") {
       try {
-        const img = await loadImage(layer.src);
+        let bitmap: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement;
+        if (layer.isVideo) {
+          const frame = await videoFirstFrame(layer.src);
+          if (!frame) continue;
+          bitmap = frame;
+        } else {
+          bitmap = await loadImage(layer.src);
+        }
+        const fit = layer.objectFit || "cover";
         withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
-          ctx.drawImage(img, lx, ly, lw, lh);
+          drawFitted(ctx, bitmap, lx, ly, lw, lh, fit);
         });
       } catch {
         /* skip */
