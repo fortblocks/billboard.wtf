@@ -127,7 +127,7 @@ function FieldChip({
   if (editing) {
     return (
       <div
-        className={`flex h-8 min-w-0 items-center gap-1 rounded-md border border-white/25 bg-white/[0.08] px-2 ${className}`}
+        className={`flex h-7 min-w-0 items-center gap-1 rounded-md border border-white/20 bg-white/[0.07] px-2 ${className}`}
       >
         <input
           ref={inputRef}
@@ -137,7 +137,7 @@ function FieldChip({
             if (e.key === "Enter") save();
             if (e.key === "Escape") cancel();
           }}
-          className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
+          className="min-w-0 flex-1 bg-transparent text-[12px] text-white outline-none placeholder:text-white/30"
           placeholder={placeholder}
         />
         <button
@@ -160,11 +160,11 @@ function FieldChip({
 
   return (
     <div
-      className={`group flex h-8 min-w-0 items-center gap-1.5 rounded-md px-2 transition hover:bg-white/[0.06] ${className}`}
+      className={`group flex h-7 min-w-0 items-center gap-1 rounded-md px-1.5 transition hover:bg-white/[0.05] ${className}`}
     >
       <span
-        className={`min-w-0 flex-1 truncate text-[13px] ${
-          isEmpty ? "text-white/30" : "text-white/90"
+        className={`min-w-0 flex-1 truncate text-[12px] ${
+          isEmpty ? "text-white/35" : "text-white/85"
         }`}
       >
         {display}
@@ -433,43 +433,41 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
-          {/* Listing in PNG transparent top (~20%), just above silver frame */}
+          {/* Listing — flush above silver frame, edges match chrome */}
           <div
-            className="absolute left-[2.5%] right-[2.5%] z-30 flex items-center gap-1.5 rounded-xl border border-white/[0.12] bg-black/75 px-2 py-1.5 shadow-lg backdrop-blur-md"
-            style={{ top: "11%" }}
+            className="absolute z-30 flex items-center gap-2"
+            style={{ top: "17.2%", left: "7.7%", right: "7.6%" }}
           >
             <FieldChip
               value={brand}
-              placeholder="Brand name"
+              placeholder="Brand"
               onCommit={commitBrand}
-              className="min-w-0 flex-[1.15]"
+              className="min-w-0 max-w-[11rem] shrink"
             />
-            <div className="h-4 w-px shrink-0 bg-white/10" />
             <FieldChip
               value={url}
               placeholder="https://"
               onCommit={commitUrl}
-              className="min-w-0 flex-1"
+              className="min-w-0 max-w-[14rem] shrink"
             />
-            <div className="h-4 w-px shrink-0 bg-white/10" />
             <FieldChip
               value={xHandle}
               placeholder="@handle"
               onCommit={commitHandle}
-              className="w-[7.5rem] shrink-0"
+              className="w-[6.5rem] shrink-0"
             />
-            <div className="h-4 w-px shrink-0 bg-white/10" />
+            <div className="min-w-2 flex-1" />
             <button
               type="button"
               onClick={shareOnX}
-              className="h-8 shrink-0 rounded-full px-3 text-[11px] text-white/55 transition hover:bg-white/[0.06] hover:text-white/90"
+              className="h-7 shrink-0 rounded-md px-2.5 text-[11px] text-white/45 transition hover:bg-white/[0.06] hover:text-white/80"
             >
               Share
             </button>
             <button
               type="button"
               onClick={saveDraft}
-              className="h-8 shrink-0 rounded-full px-3 text-[11px] text-white/55 transition hover:bg-white/[0.06] hover:text-white/90"
+              className="h-7 shrink-0 rounded-md px-2.5 text-[11px] text-white/45 transition hover:bg-white/[0.06] hover:text-white/80"
             >
               {savedFlash ? "Saved" : "Save"}
             </button>
@@ -477,7 +475,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
               type="button"
               onClick={lock}
               disabled={!brand.trim()}
-              className="h-8 shrink-0 rounded-full bg-white px-4 text-[11px] font-semibold text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
+              className="h-7 shrink-0 rounded-full bg-white px-3.5 text-[11px] font-semibold tracking-tight text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
             >
               Lock & go live
             </button>
