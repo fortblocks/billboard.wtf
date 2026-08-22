@@ -42,7 +42,12 @@ export interface ImageLayer extends BaseLayer {
 
 export interface StickerLayer extends BaseLayer {
   type: "sticker";
-  emoji: string;
+  /** Unicode emoji glyph (flat). */
+  emoji?: string;
+  /** Image / SVG / GIF URL (icons + animated). */
+  src?: string;
+  /** Hint for UI / export */
+  stickerKind?: "emoji" | "icon" | "gif";
 }
 
 export interface ShapeLayer extends BaseLayer {
