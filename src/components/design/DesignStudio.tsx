@@ -127,7 +127,7 @@ function FieldChip({
   if (editing) {
     return (
       <div
-        className={`flex h-7 min-w-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2 ${className}`}
+        className={`flex h-8 min-w-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 ${className}`}
       >
         <input
           ref={inputRef}
@@ -137,7 +137,7 @@ function FieldChip({
             if (e.key === "Enter") save();
             if (e.key === "Escape") cancel();
           }}
-          className="min-w-0 flex-1 bg-transparent text-[13px] text-neutral-900 outline-none placeholder:text-neutral-400"
+          className="min-w-0 flex-1 bg-transparent text-[14px] text-neutral-900 outline-none placeholder:text-neutral-400"
           placeholder={placeholder}
         />
         <button
@@ -160,10 +160,10 @@ function FieldChip({
 
   return (
     <div
-      className={`group flex h-7 min-w-0 items-center gap-1 rounded px-1.5 transition hover:bg-neutral-100 ${className}`}
+      className={`group flex h-8 min-w-0 items-center gap-1 rounded px-2 transition hover:bg-neutral-100 ${className}`}
     >
       <span
-        className={`min-w-0 flex-1 truncate text-[13px] ${
+        className={`min-w-0 flex-1 truncate text-[14px] ${
           isEmpty ? "text-neutral-400" : "text-neutral-800"
         }`}
       >
@@ -435,10 +435,10 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
-          {/* White listing bar — matches silver chrome width */}
+          {/* White listing bar — 42px for breathing room */}
           <div
-            className="absolute z-30 flex h-[28px] items-center gap-1.5 rounded-sm bg-white px-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.12)]"
-            style={{ top: "15.8%", left: "7.7%", right: "7.6%" }}
+            className="absolute z-30 flex h-[42px] items-center gap-2 rounded-sm bg-white px-3 shadow-[0_1px_3px_rgba(0,0,0,0.12)]"
+            style={{ top: "15.2%", left: "7.7%", right: "7.6%" }}
           >
             <FieldChip
               value={brand}
@@ -446,14 +446,14 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
               onCommit={commitBrand}
               className="min-w-0 max-w-[10.5rem] shrink"
             />
-            <div className="h-3.5 w-px shrink-0 bg-neutral-200" />
+            <div className="h-4 w-px shrink-0 bg-neutral-200" />
             <FieldChip
               value={url}
               placeholder="https://"
               onCommit={commitUrl}
               className="min-w-0 max-w-[13rem] shrink"
             />
-            <div className="h-3.5 w-px shrink-0 bg-neutral-200" />
+            <div className="h-4 w-px shrink-0 bg-neutral-200" />
             <FieldChip
               value={xHandle}
               placeholder="@handle"
@@ -464,7 +464,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             <button
               type="button"
               onClick={() => setHelpOpen((v) => !v)}
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
               aria-label="How it works"
               title="How it works"
             >
@@ -477,14 +477,14 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             <button
               type="button"
               onClick={shareOnX}
-              className="h-6 shrink-0 rounded px-2 text-[12px] text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-800"
+              className="h-7 shrink-0 rounded px-2.5 text-[13px] text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-800"
             >
               Share
             </button>
             <button
               type="button"
               onClick={saveDraft}
-              className="h-6 shrink-0 rounded px-2 text-[12px] text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-800"
+              className="h-7 shrink-0 rounded px-2.5 text-[13px] text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-800"
             >
               {savedFlash ? "Saved" : "Save"}
             </button>
@@ -492,7 +492,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
               type="button"
               onClick={lock}
               disabled={!brand.trim()}
-              className="h-6 shrink-0 rounded-full bg-neutral-900 px-3 text-[12px] font-semibold text-white transition hover:bg-neutral-700 disabled:opacity-40"
+              className="h-7 shrink-0 rounded-full bg-neutral-900 px-3.5 text-[13px] font-semibold text-white transition hover:bg-neutral-700 disabled:opacity-40"
             >
               Lock & go live
             </button>
@@ -501,7 +501,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
           {helpOpen && (
             <div
               className="absolute z-40 rounded-lg border border-neutral-200 bg-white p-4 text-[13px] leading-relaxed text-neutral-700 shadow-xl"
-              style={{ top: "22%", left: "7.7%", width: "min(340px, 84%)" }}
+              style={{ top: "23%", left: "7.7%", width: "min(340px, 84%)" }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-2 flex items-center justify-between">
