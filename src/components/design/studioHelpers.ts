@@ -60,8 +60,8 @@ export const STICKER_PACKS: StickerPack[] = [
 /** Flat list for quick toolbar swaps */
 export const STICKERS = STICKER_PACKS.flatMap((p) => p.items);
 
-export type { EmojiEntry } from "./emojiData";
-export { EMOJI_LIB, searchEmojis } from "./emojiData";
+export type { EmojiEntry, AnimatedSticker } from "./emojiData";
+export { EMOJI_LIB, searchEmojis, ANIMATED_STICKERS, searchAnimated } from "./emojiData";
 
 /** Iconify public search — returns prefix:name ids. */
 export async function searchIconify(query: string, limit = 48): Promise<{ id: string; svgUrl: string }[]> {
