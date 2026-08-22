@@ -127,7 +127,7 @@ function FieldChip({
   if (editing) {
     return (
       <div
-        className={`flex h-8 min-w-0 items-center gap-1 rounded-md border border-white/20 bg-white/[0.07] px-2.5 ${className}`}
+        className={`flex h-7 min-w-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2 ${className}`}
       >
         <input
           ref={inputRef}
@@ -137,17 +137,17 @@ function FieldChip({
             if (e.key === "Enter") save();
             if (e.key === "Escape") cancel();
           }}
-          className="min-w-0 flex-1 bg-transparent text-[14px] text-white outline-none placeholder:text-white/30"
+          className="min-w-0 flex-1 bg-transparent text-[13px] text-neutral-900 outline-none placeholder:text-neutral-400"
           placeholder={placeholder}
         />
         <button
           type="button"
           onClick={save}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-emerald-400 transition hover:bg-white/10"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-emerald-600 transition hover:bg-neutral-100"
           aria-label="Save"
           title="Save"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </button>
@@ -160,11 +160,11 @@ function FieldChip({
 
   return (
     <div
-      className={`group flex h-8 min-w-0 items-center gap-1 rounded-md px-1.5 transition hover:bg-white/[0.05] ${className}`}
+      className={`group flex h-7 min-w-0 items-center gap-1 rounded px-1.5 transition hover:bg-neutral-100 ${className}`}
     >
       <span
-        className={`min-w-0 flex-1 truncate text-[14px] ${
-          isEmpty ? "text-white/35" : "text-white/85"
+        className={`min-w-0 flex-1 truncate text-[13px] ${
+          isEmpty ? "text-neutral-400" : "text-neutral-800"
         }`}
       >
         {display}
@@ -172,11 +172,11 @@ function FieldChip({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/35 opacity-70 transition hover:bg-white/10 hover:text-white group-hover:opacity-100"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-neutral-400 opacity-70 transition hover:bg-neutral-200 hover:text-neutral-700 group-hover:opacity-100"
         aria-label={`Edit ${placeholder}`}
         title="Edit"
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 20h9" />
           <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
         </svg>
@@ -193,6 +193,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
   const [fontPanelOpen, setFontPanelOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [brand, setBrand] = useState(entry.brand);
   const [url, setUrl] = useState(entry.url ?? "");
   const [xHandle, setXHandle] = useState("");
@@ -286,6 +287,7 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
         setSelectedId(null);
         setPlusOpen(false);
         setFontPanelOpen(false);
+        setHelpOpen(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -433,41 +435,56 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
-          {/* Listing — above silver frame with breathing room */}
+          {/* White listing bar — matches silver chrome width */}
           <div
-            className="absolute z-30 flex items-center gap-2"
-            style={{ top: "14.5%", left: "7.7%", right: "7.6%" }}
+            className="absolute z-30 flex h-[28px] items-center gap-1.5 rounded-sm bg-white px-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.12)]"
+            style={{ top: "15.8%", left: "7.7%", right: "7.6%" }}
           >
             <FieldChip
               value={brand}
               placeholder="Brand"
               onCommit={commitBrand}
-              className="min-w-0 max-w-[11rem] shrink"
+              className="min-w-0 max-w-[10.5rem] shrink"
             />
+            <div className="h-3.5 w-px shrink-0 bg-neutral-200" />
             <FieldChip
               value={url}
               placeholder="https://"
               onCommit={commitUrl}
-              className="min-w-0 max-w-[14rem] shrink"
+              className="min-w-0 max-w-[13rem] shrink"
             />
+            <div className="h-3.5 w-px shrink-0 bg-neutral-200" />
             <FieldChip
               value={xHandle}
               placeholder="@handle"
               onCommit={commitHandle}
-              className="w-[6.5rem] shrink-0"
+              className="w-[6rem] shrink-0"
             />
-            <div className="min-w-2 flex-1" />
+            <div className="min-w-1 flex-1" />
+            <button
+              type="button"
+              onClick={() => setHelpOpen((v) => !v)}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+              aria-label="How it works"
+              title="How it works"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            </button>
             <button
               type="button"
               onClick={shareOnX}
-              className="h-8 shrink-0 rounded-md px-2.5 text-[13px] text-white/45 transition hover:bg-white/[0.06] hover:text-white/80"
+              className="h-6 shrink-0 rounded px-2 text-[12px] text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-800"
             >
               Share
             </button>
             <button
               type="button"
               onClick={saveDraft}
-              className="h-8 shrink-0 rounded-md px-2.5 text-[13px] text-white/45 transition hover:bg-white/[0.06] hover:text-white/80"
+              className="h-6 shrink-0 rounded px-2 text-[12px] text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-800"
             >
               {savedFlash ? "Saved" : "Save"}
             </button>
@@ -475,11 +492,40 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
               type="button"
               onClick={lock}
               disabled={!brand.trim()}
-              className="h-8 shrink-0 rounded-full bg-white px-4 text-[13px] font-semibold tracking-tight text-neutral-900 transition hover:bg-neutral-200 disabled:opacity-40"
+              className="h-6 shrink-0 rounded-full bg-neutral-900 px-3 text-[12px] font-semibold text-white transition hover:bg-neutral-700 disabled:opacity-40"
             >
               Lock & go live
             </button>
           </div>
+
+          {helpOpen && (
+            <div
+              className="absolute z-40 rounded-lg border border-neutral-200 bg-white p-4 text-[13px] leading-relaxed text-neutral-700 shadow-xl"
+              style={{ top: "22%", left: "7.7%", width: "min(340px, 84%)" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
+                  How the builder works
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setHelpOpen(false)}
+                  className="text-neutral-400 hover:text-neutral-700"
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
+              </div>
+              <ol className="list-decimal space-y-1.5 pl-4">
+                <li>Tap <strong>+</strong> on the face to add text, an image, or a sticker.</li>
+                <li>Drag layers to place them. Resize from the corner handle.</li>
+                <li>Select text to change copy, size, colour, or font.</li>
+                <li>Edit brand, URL, and @handle with the pencil icons above.</li>
+                <li>Save a draft anytime. When it feels right, Lock & go live.</li>
+              </ol>
+            </div>
+          )}
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
