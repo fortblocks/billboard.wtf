@@ -88,7 +88,6 @@ function isHint(l: Layer) {
   return HINTS.some((s) => t.includes(s));
 }
 
-/** Compact display / pencil-edit / save field */
 function FieldChip({
   value,
   placeholder,
@@ -428,17 +427,13 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
     <div className="relative h-full w-full overflow-hidden bg-neutral-950">
       <div className="absolute inset-0 flex items-end justify-center">
         <div
-          className="relative"
+          className="relative flex flex-col"
           style={{
             width: BOARD_WIDTH,
             transform: `translateY(${BOARD_OFFSET_Y}px)`,
           }}
         >
-          {/* Listing strip — one line, just above the board */}
-          <div
-            className="absolute left-0 right-0 z-30 flex items-center gap-1.5"
-            style={{ bottom: "100%", marginBottom: 12 }}
-          >
+          <div className="z-30 mb-3 flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-black/55 px-2 py-1.5 backdrop-blur-sm">
             <FieldChip
               value={brand}
               placeholder="Brand name"
@@ -484,199 +479,201 @@ export function DesignStudio({ entry }: { entry: BoardEntry }) {
             </button>
           </div>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/splash/board-frame.png"
-            alt=""
-            className="pointer-events-none relative z-10 block h-auto w-full select-none"
-            draggable={false}
-          />
+          <div className="relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/splash/board-frame.png"
+              alt=""
+              className="pointer-events-none relative z-10 block h-auto w-full select-none"
+              draggable={false}
+            />
 
-          <div
-            ref={faceRef}
-            className="absolute overflow-hidden bg-white"
-            style={{
-              left: FACE.left,
-              top: FACE.top,
-              right: FACE.right,
-              bottom: FACE.bottom,
-            }}
-            onClick={() => {
-              setSelectedId(null);
-              setPlusOpen(false);
-              setFontPanelOpen(false);
-            }}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerLeave={onPointerUp}
-          >
-            {layers
-              .slice()
-              .sort((a, b) => a.z - b.z)
-              .map((layer) => (
-                <div
-                  key={layer.id}
-                  className={`absolute ${
-                    selectedId === layer.id
-                      ? "outline outline-2 outline-sky-400 outline-offset-[-1px]"
-                      : ""
-                  }`}
-                  style={{
-                    left: `${layer.x}%`,
-                    top: `${layer.y}%`,
-                    width: `${layer.w}%`,
-                    height: `${layer.h}%`,
-                    zIndex: layer.z,
-                    transform: layer.rotation
-                      ? `rotate(${layer.rotation}deg)`
-                      : undefined,
-                    cursor:
-                      dragging && selectedId === layer.id ? "grabbing" : "grab",
+            <div
+              ref={faceRef}
+              className="absolute overflow-hidden bg-white"
+              style={{
+                left: FACE.left,
+                top: FACE.top,
+                right: FACE.right,
+                bottom: FACE.bottom,
+              }}
+              onClick={() => {
+                setSelectedId(null);
+                setPlusOpen(false);
+                setFontPanelOpen(false);
+              }}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerLeave={onPointerUp}
+            >
+              {layers
+                .slice()
+                .sort((a, b) => a.z - b.z)
+                .map((layer) => (
+                  <div
+                    key={layer.id}
+                    className={`absolute ${
+                      selectedId === layer.id
+                        ? "outline outline-2 outline-sky-400 outline-offset-[-1px]"
+                        : ""
+                    }`}
+                    style={{
+                      left: `${layer.x}%`,
+                      top: `${layer.y}%`,
+                      width: `${layer.w}%`,
+                      height: `${layer.h}%`,
+                      zIndex: layer.z,
+                      transform: layer.rotation
+                        ? `rotate(${layer.rotation}deg)`
+                        : undefined,
+                      cursor:
+                        dragging && selectedId === layer.id ? "grabbing" : "grab",
+                    }}
+                    onPointerDown={(e) => onPointerDown(e, layer.id)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {layer.type === "text" && (
+                      <div
+                        className="flex h-full w-full items-center px-[3%] py-[3%] leading-tight"
+                        style={{
+                          justifyContent:
+                            layer.align === "center"
+                              ? "center"
+                              : layer.align === "right"
+                                ? "flex-end"
+                                : "flex-start",
+                          fontFamily: layer.fontFamily,
+                          fontSize: `${layer.fontSize}vh`,
+                          color: layer.color,
+                          fontWeight: layer.fontWeight,
+                          fontStyle: layer.fontStyle,
+                          textAlign: layer.align,
+                          wordBreak: "break-word",
+                          whiteSpace: "pre-wrap",
+                          pointerEvents: "none",
+                          background: layer.background || "transparent",
+                          borderRadius: layer.background ? 4 : 0,
+                          boxShadow: layer.background
+                            ? "0 2px 8px rgba(0,0,0,0.25)"
+                            : "none",
+                        }}
+                      >
+                        {layer.text}
+                      </div>
+                    )}
+                    {layer.type === "image" && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={layer.src}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        draggable={false}
+                        style={{ pointerEvents: "none" }}
+                      />
+                    )}
+                    {layer.type === "sticker" && (
+                      <div
+                        className="flex h-full w-full items-center justify-center"
+                        style={{
+                          fontSize: "min(8vw, 12vh)",
+                          pointerEvents: "none",
+                        }}
+                      >
+                        {layer.emoji}
+                      </div>
+                    )}
+                    {selectedId === layer.id && (
+                      <div
+                        className="absolute bottom-0 right-0 h-3 w-3 cursor-se-resize rounded-sm bg-sky-400"
+                        onPointerDown={(e) => {
+                          e.stopPropagation();
+                          const startX = e.clientX;
+                          const startY = e.clientY;
+                          const startW = layer.w;
+                          const startH = layer.h;
+                          const face = faceRef.current;
+                          if (!face) return;
+                          const onMove = (ev: PointerEvent) => {
+                            const r = face.getBoundingClientRect();
+                            updateLayer(layer.id, {
+                              w: Math.max(
+                                8,
+                                Math.min(100, startW + ((ev.clientX - startX) / r.width) * 100)
+                              ),
+                              h: Math.max(
+                                8,
+                                Math.min(100, startH + ((ev.clientY - startY) / r.height) * 100)
+                              ),
+                            });
+                          };
+                          const onUp = () => {
+                            window.removeEventListener("pointermove", onMove);
+                            window.removeEventListener("pointerup", onUp);
+                          };
+                          window.addEventListener("pointermove", onMove);
+                          window.addEventListener("pointerup", onUp);
+                        }}
+                      />
+                    )}
+                  </div>
+                ))}
+
+              {showCenterPlus && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPlusOpen((v) => !v);
                   }}
-                  onPointerDown={(e) => onPointerDown(e, layer.id)}
+                  className="absolute z-30 flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-neutral-300 text-2xl text-neutral-400 transition hover:border-neutral-500 hover:bg-black/5 hover:text-neutral-700"
+                  aria-label="Add content"
+                  style={{
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  +
+                </button>
+              )}
+
+              {plusOpen && (
+                <div
+                  className="absolute z-40 flex flex-wrap justify-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl"
+                  style={{
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {layer.type === "text" && (
-                    <div
-                      className="flex h-full w-full items-center px-[3%] py-[3%] leading-tight"
-                      style={{
-                        justifyContent:
-                          layer.align === "center"
-                            ? "center"
-                            : layer.align === "right"
-                              ? "flex-end"
-                              : "flex-start",
-                        fontFamily: layer.fontFamily,
-                        fontSize: `${layer.fontSize}vh`,
-                        color: layer.color,
-                        fontWeight: layer.fontWeight,
-                        fontStyle: layer.fontStyle,
-                        textAlign: layer.align,
-                        wordBreak: "break-word",
-                        whiteSpace: "pre-wrap",
-                        pointerEvents: "none",
-                        background: layer.background || "transparent",
-                        borderRadius: layer.background ? 4 : 0,
-                        boxShadow: layer.background
-                          ? "0 2px 8px rgba(0,0,0,0.25)"
-                          : "none",
-                      }}
-                    >
-                      {layer.text}
-                    </div>
-                  )}
-                  {layer.type === "image" && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={layer.src}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      draggable={false}
-                      style={{ pointerEvents: "none" }}
-                    />
-                  )}
-                  {layer.type === "sticker" && (
-                    <div
-                      className="flex h-full w-full items-center justify-center"
-                      style={{
-                        fontSize: "min(8vw, 12vh)",
-                        pointerEvents: "none",
-                      }}
-                    >
-                      {layer.emoji}
-                    </div>
-                  )}
-                  {selectedId === layer.id && (
-                    <div
-                      className="absolute bottom-0 right-0 h-3 w-3 cursor-se-resize rounded-sm bg-sky-400"
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        const startX = e.clientX;
-                        const startY = e.clientY;
-                        const startW = layer.w;
-                        const startH = layer.h;
-                        const face = faceRef.current;
-                        if (!face) return;
-                        const onMove = (ev: PointerEvent) => {
-                          const r = face.getBoundingClientRect();
-                          updateLayer(layer.id, {
-                            w: Math.max(
-                              8,
-                              Math.min(100, startW + ((ev.clientX - startX) / r.width) * 100)
-                            ),
-                            h: Math.max(
-                              8,
-                              Math.min(100, startH + ((ev.clientY - startY) / r.height) * 100)
-                            ),
-                          });
-                        };
-                        const onUp = () => {
-                          window.removeEventListener("pointermove", onMove);
-                          window.removeEventListener("pointerup", onUp);
-                        };
-                        window.addEventListener("pointermove", onMove);
-                        window.addEventListener("pointerup", onUp);
-                      }}
-                    />
-                  )}
+                  <button
+                    type="button"
+                    onClick={addText}
+                    className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
+                  >
+                    Text
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
+                  >
+                    Image
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlusOpen(false);
+                      setSelectedId("__stickers__");
+                    }}
+                    className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
+                  >
+                    Sticker
+                  </button>
                 </div>
-              ))}
-
-            {showCenterPlus && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPlusOpen((v) => !v);
-                }}
-                className="absolute z-30 flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-neutral-300 text-2xl text-neutral-400 transition hover:border-neutral-500 hover:bg-black/5 hover:text-neutral-700"
-                aria-label="Add content"
-                style={{
-                  left: "50%",
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                +
-              </button>
-            )}
-
-            {plusOpen && (
-              <div
-                className="absolute z-40 flex flex-wrap justify-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl"
-                style={{
-                  left: "50%",
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  type="button"
-                  onClick={addText}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
-                >
-                  Text
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
-                >
-                  Image
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPlusOpen(false);
-                    setSelectedId("__stickers__");
-                  }}
-                  className="rounded-xl bg-neutral-100 px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-200"
-                >
-                  Sticker
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
