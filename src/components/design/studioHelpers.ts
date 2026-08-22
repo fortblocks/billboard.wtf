@@ -58,6 +58,50 @@ export function roundRect(
   ctx.closePath();
 }
 
+function resolveFontFamily(family: string): string {
+  if (!family.includes("var(")) return family;
+  return family
+    .replace(/var\(--font-anton\)/g, "Anton")
+    .replace(/var\(--font-bebas\)/g, "Bebas Neue")
+    .replace(/var\(--font-oswald\)/g, "Oswald")
+    .replace(/var\(--font-archivo\)/g, "Archivo Black")
+    .replace(/var\(--font-blackops\)/g, "Black Ops One")
+    .replace(/var\(--font-russo\)/g, "Russo One")
+    .replace(/var\(--font-bangers\)/g, "Bangers")
+    .replace(/var\(--font-marker\)/g, "Permanent Marker")
+    .replace(/var\(--font-playfair\)/g, "Playfair Display")
+    .replace(/var\(--font-space\)/g, "Space Grotesk")
+    .replace(/var\(--font-inter\)/g, "Inter")
+    .replace(/var\(--font-geist-sans\)/g, "system-ui")
+    .replace(/var\(--font-geist-mono\)/g, "ui-monospace");
+}
+
+/** Apply shared transform (rotation, flip, opacity) around layer centre. */
+function withLayerTransform(
+  ctx: CanvasRenderingContext2D,
+  lx: number,
+  ly: number,
+  lw: number,
+  lh: number,
+  layer: Layer,
+  draw: () => void
+) {
+  if (layer.visible === false) return;
+  const cx = lx + lw / 2;
+  const cy = ly + lh / 2;
+  const rot = ((layer.rotation ?? 0) * Math.PI) / 180;
+  const sx = layer.flipX ? -1 : 1;
+  const sy = layer.flipY ? -1 : 1;
+  ctx.save();
+  ctx.globalAlpha = layer.opacity ?? 1;
+  ctx.translate(cx, cy);
+  ctx.rotate(rot);
+  ctx.scale(sx, sy);
+  ctx.translate(-cx, -cy);
+  draw();
+  ctx.restore();
+}
+
 export async function rasterizeFace(
   faceEl: HTMLDivElement,
   layers: Layer[]
@@ -72,78 +116,94 @@ export async function rasterizeFace(
   ctx.scale(scale, scale);
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, rect.width, rect.height);
-  const sorted = layers.slice().sort((a, b) => a.z - b.z);
+  const sorted = layers
+    .slice()
+    .filter((l) => l.visible !== false)
+    .sort((a, b) => a.z - b.z);
+
   for (const layer of sorted) {
     const lx = (layer.x / 100) * rect.width;
     const ly = (layer.y / 100) * rect.height;
     const lw = (layer.w / 100) * rect.width;
     const lh = (layer.h / 100) * rect.height;
+
     if (layer.type === "text") {
-      ctx.save();
-      if (layer.background) {
-        ctx.fillStyle = layer.background;
-        const r = Math.min(lh * 0.08, 8);
-        roundRect(ctx, lx, ly, lw, lh, r);
-        ctx.fill();
-      }
-      ctx.fillStyle = layer.color;
-      const px = Math.max(12, (layer.fontSize / 100) * rect.height * 4);
-      // Resolve CSS vars for canvas (canvas can't use var())
-      let family = layer.fontFamily;
-      if (family.includes("var(")) {
-        family = family
-          .replace(/var\(--font-anton\)/g, "Anton")
-          .replace(/var\(--font-bebas\)/g, "Bebas Neue")
-          .replace(/var\(--font-oswald\)/g, "Oswald")
-          .replace(/var\(--font-archivo\)/g, "Archivo Black")
-          .replace(/var\(--font-blackops\)/g, "Black Ops One")
-          .replace(/var\(--font-russo\)/g, "Russo One")
-          .replace(/var\(--font-bangers\)/g, "Bangers")
-          .replace(/var\(--font-marker\)/g, "Permanent Marker")
-          .replace(/var\(--font-playfair\)/g, "Playfair Display")
-          .replace(/var\(--font-space\)/g, "Space Grotesk")
-          .replace(/var\(--font-inter\)/g, "Inter")
-          .replace(/var\(--font-geist-sans\)/g, "system-ui")
-          .replace(/var\(--font-geist-mono\)/g, "ui-monospace");
-      }
-      ctx.font = `${layer.fontStyle === "italic" ? "italic " : ""}${layer.fontWeight} ${px}px ${family}`;
-      ctx.textAlign = layer.align;
-      ctx.textBaseline = "middle";
-      const tx =
-        layer.align === "center"
-          ? lx + lw / 2
-          : layer.align === "right"
-            ? lx + lw
-            : lx;
-      const lines = String(layer.text).split("\n");
-      const lineH = px * 1.15;
-      const startY = ly + lh / 2 - ((lines.length - 1) * lineH) / 2;
-      lines.forEach((line, i) => {
-        ctx.fillText(line, tx, startY + i * lineH, lw);
+      withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+        if (layer.background) {
+          ctx.fillStyle = layer.background;
+          const r = Math.min(lh * 0.08, 8);
+          roundRect(ctx, lx, ly, lw, lh, r);
+          ctx.fill();
+        }
+        ctx.fillStyle = layer.color;
+        const px = Math.max(12, (layer.fontSize / 100) * rect.height * 4);
+        const family = resolveFontFamily(layer.fontFamily);
+        ctx.font = `${layer.fontStyle === "italic" ? "italic " : ""}${layer.fontWeight} ${px}px ${family}`;
+        ctx.textAlign = layer.align;
+        ctx.textBaseline = "middle";
+        const tx =
+          layer.align === "center"
+            ? lx + lw / 2
+            : layer.align === "right"
+              ? lx + lw
+              : lx;
+        const lines = String(layer.text).split("\n");
+        const lineH = px * 1.15;
+        const startY = ly + lh / 2 - ((lines.length - 1) * lineH) / 2;
+        lines.forEach((line, i) => {
+          ctx.fillText(line, tx, startY + i * lineH, lw);
+        });
       });
-      ctx.restore();
     } else if (layer.type === "sticker") {
-      ctx.font = `${lh * 0.8}px serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(layer.emoji, lx + lw / 2, ly + lh / 2);
+      withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+        ctx.font = `${lh * 0.8}px serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(layer.emoji, lx + lw / 2, ly + lh / 2);
+      });
     } else if (layer.type === "image") {
       try {
         const img = await loadImage(layer.src);
-        ctx.drawImage(img, lx, ly, lw, lh);
+        withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+          ctx.drawImage(img, lx, ly, lw, lh);
+        });
       } catch {
-        // skip
+        /* skip */
       }
     } else if (layer.type === "button") {
-      ctx.fillStyle = layer.bg;
-      const r = Math.min(lh / 2, 20);
-      roundRect(ctx, lx, ly, lw, lh, r);
-      ctx.fill();
-      ctx.fillStyle = layer.color;
-      ctx.font = `600 ${Math.max(10, lh * 0.35)}px system-ui`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(layer.label, lx + lw / 2, ly + lh / 2, lw);
+      withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+        ctx.fillStyle = layer.bg;
+        const r = Math.min(lh / 2, 20);
+        roundRect(ctx, lx, ly, lw, lh, r);
+        ctx.fill();
+        ctx.fillStyle = layer.color;
+        ctx.font = `600 ${Math.max(10, lh * 0.35)}px system-ui`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(layer.label, lx + lw / 2, ly + lh / 2, lw);
+      });
+    } else if (layer.type === "shape") {
+      withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+        ctx.fillStyle = layer.fill;
+        if (layer.shape === "circle") {
+          ctx.beginPath();
+          ctx.ellipse(lx + lw / 2, ly + lh / 2, lw / 2, lh / 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(lx, ly, lw, lh);
+        }
+      });
+    } else if (layer.type === "draw") {
+      withLayerTransform(ctx, lx, ly, lw, lh, layer, () => {
+        for (const p of layer.paths) {
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = p.width;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          const path = new Path2D(p.d);
+          ctx.stroke(path);
+        }
+      });
     }
   }
   return canvas.toDataURL("image/png");
